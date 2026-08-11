@@ -831,7 +831,7 @@
 
     <script>
         // ============================================================
-        // DONNÉES
+        // DONNÉES — Tableaux vides pour les membres et mouvements
         // ============================================================
         const STORAGE_KEY = 'eglise_man_data';
 
@@ -839,103 +839,9 @@
             return {
                 config: { ville: 'MAN', region: 'TONKPI', zone: 'MAN', dirigeant: 'Couple GNADJI Eugène & Sandrine',
                     contact: '07 49 83 31 57' },
-                membres: [
-                    { id: 1, nom: 'GBA', prenoms: 'Edy Marius', contact: '07-08-18-50-43', quartier: 'Fraternité',
-                        profession: 'Commerciale', dateBapteme: '2021-03-01', genre: 'H', ministere: 'Célibataires',
-                        egliseMaison: 'Domoraud', dirigeantDB: 'Konan Joseph', formateur: 'Konan Joseph',
-                        statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 2, nom: 'KONAN', prenoms: 'Vonin Felix', contact: '07-00-96-48-40', quartier: 'Commerce',
-                        profession: 'Suivi évaluateur/Scientifique', dateBapteme: '2016-11-01', genre: 'H',
-                        ministere: 'Célibataires', egliseMaison: 'Air France/Libreville',
-                        dirigeantDB: 'Konan Vonin Felix', formateur: 'Joseph Konan', statut: 'Actif', ville: 'Man',
-                        nomDirigeant: 'Konan Joseph' },
-                    { id: 3, nom: 'LAGO', prenoms: 'Steven', contact: '07-57-00-60-88', quartier: 'Maqueau-Agboville',
-                        profession: 'Comptable', dateBapteme: '2022-01-01', genre: 'H', ministere: 'Célibataires',
-                        egliseMaison: 'Air France/Libreville', dirigeantDB: 'Konan Vonin Felix',
-                        formateur: 'Joseph Konan', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 4, nom: 'AKAGNY', prenoms: 'Antoine', contact: '05-06-06-99-04', quartier: 'Quartier Thérèse',
-                        profession: 'Technicien en bâtiment', dateBapteme: '2023-01-01', genre: 'H',
-                        ministere: 'Célibataires', egliseMaison: 'Air France/Libreville',
-                        dirigeantDB: 'Konan Vonin Felix', formateur: 'Goué bi Marius', statut: 'Actif', ville: 'Man',
-                        nomDirigeant: 'Konan Joseph' },
-                    { id: 5, nom: 'SEMUN', prenoms: "N'de", contact: '07-69-64-98-19', quartier: 'Plateau de Zouhan-hounien',
-                        profession: 'Ingénieur des mines', dateBapteme: '2016-05-01', genre: 'H',
-                        ministere: 'Célibataires', egliseMaison: 'Zouan-Hounien', dirigeantDB: 'Tanoh tano Jackson',
-                        formateur: 'Tanoh Jackson', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 6, nom: 'GNADJI', prenoms: 'Kla Eugène', contact: '07-49-83-31-57', quartier: 'Domoraud',
-                        profession: 'Enseignant', dateBapteme: '2007-05-01', genre: 'H', ministere: 'Mariés',
-                        egliseMaison: 'Domoraud', dirigeantDB: 'Konan Joseph', formateur: 'Couple Angaman',
-                        statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 7, nom: 'KONAN', prenoms: 'Joseph', contact: '07-09-86-65-92', quartier: 'Domoraud',
-                        profession: 'Responsable Suivi Évaluation', dateBapteme: '2004-01-01', genre: 'H',
-                        ministere: 'Mariés', egliseMaison: 'Domoraud', dirigeantDB: 'Konan Joseph',
-                        formateur: 'Couple SAORE', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 8, nom: 'SAORE', prenoms: 'Emmanuel', contact: '07-08-25-48-39', quartier: 'Camp Sea',
-                        profession: 'Enseignant-chercheur', dateBapteme: '2005-09-01', genre: 'H', ministere: 'Mariés',
-                        egliseMaison: 'Lycée Club/Camp Sea', dirigeantDB: 'Saore Emmanuel',
-                        formateur: 'Couple Gnadji', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 9, nom: 'SAORE', prenoms: 'Henriette', contact: '07-09-82-28-07', quartier: 'Camp Sea',
-                        profession: 'Infirmière', dateBapteme: '2018-10-01', genre: 'F', ministere: 'Mariées',
-                        egliseMaison: 'Lycée Club/Camp Sea', dirigeantDB: 'Saore Emmanuel',
-                        formateur: 'Couple Gnadji', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 10, nom: 'GOUE BI', prenoms: 'Marius', contact: '07-79-65-96-56', quartier: 'Petit Paris',
-                        profession: 'Militaire', dateBapteme: '2015-11-01', genre: 'H', ministere: 'Mariés',
-                        egliseMaison: 'Lycée Club/Camp Sea', dirigeantDB: 'Konan Joseph',
-                        formateur: 'Gnadji Kla Eugène', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 11, nom: 'TO', prenoms: 'Guy Mathias', contact: '07-58-80-88-97', quartier: 'Bangolo',
-                        profession: '', dateBapteme: '2003-04-01', genre: 'H', ministere: 'Mariés',
-                        egliseMaison: 'Bangolo', dirigeantDB: 'To Guy Mathias', formateur: 'Gnadji Kla Eugène',
-                        statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 12, nom: 'GNADJI', prenoms: 'Sandrine Née Yavo', contact: '07-59-87-40-90', quartier: 'Domoraud',
-                        profession: 'Enseignante', dateBapteme: '2007-05-01', genre: 'F', ministere: 'Mariées',
-                        egliseMaison: 'Lycée Club/Camp Sea', dirigeantDB: 'Konan Joseph',
-                        formateur: 'Couple Angaman', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 13, nom: 'KONAN', prenoms: 'Chimène', contact: '07-49-47-60-50', quartier: 'Domoraud',
-                        profession: 'Commerciale', dateBapteme: '2014-02-01', genre: 'F', ministere: 'Mariées',
-                        egliseMaison: 'Lycée Club/Camp Sea', dirigeantDB: 'Konan Joseph', formateur: 'Couple Saore',
-                        statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 14, nom: 'CAMARA', prenoms: 'Victoire Mafitini', contact: '07-09-34-84-57',
-                        quartier: 'Air France', profession: 'Secrétaire', dateBapteme: '2017-04-01', genre: 'F',
-                        ministere: 'Célibataires', egliseMaison: 'Air France/Libreville',
-                        dirigeantDB: 'Konan Vonin Felix', formateur: 'Mdme Gnadji', statut: 'Actif', ville: 'Man',
-                        nomDirigeant: 'Konan Joseph' },
-                    { id: 15, nom: 'LOHOURI', prenoms: 'Tatiana, épse TO', contact: '07-77-86-69-72', quartier: 'Bangolo',
-                        profession: 'Commerçante', dateBapteme: '2015-01-01', genre: 'F', ministere: 'Mariées',
-                        egliseMaison: 'Air France/Libreville', dirigeantDB: 'Toh Guy Mathias',
-                        formateur: 'Mdme Gnadji', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 16, nom: 'KESSE', prenoms: 'Sahi Ange Patrick', contact: '05-95-71-79-99',
-                        quartier: 'Kassiapleu', profession: 'Étudiant', dateBapteme: '2019-03-01', genre: 'H',
-                        ministere: 'Étudiants', egliseMaison: 'Air France/Libreville', dirigeantDB: 'Konan Joseph',
-                        formateur: 'Saore Emmanuel', statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' },
-                    { id: 17, nom: 'SAHI', prenoms: '', contact: '', quartier: 'Gbombelo', profession: 'Ménagère',
-                        dateBapteme: '', genre: 'F', ministere: 'Mamans', egliseMaison: 'Domoraud',
-                        dirigeantDB: 'Konan Joseph', formateur: 'Camara Victoire', statut: 'Actif', ville: 'Man',
-                        nomDirigeant: 'Konan Joseph' },
-                    { id: 18, nom: 'KONAN', prenoms: 'Boris', contact: '07 09 87 51 38', quartier: 'Blokoss CHR',
-                        profession: 'Technicien agricole', dateBapteme: '2015-01-01', genre: 'H', ministere: 'Mariés',
-                        egliseMaison: 'Domoraud', dirigeantDB: 'Konan Joseph', formateur: 'Kouakou F. Olivier',
-                        statut: 'Actif', ville: 'Man', nomDirigeant: 'Konan Joseph' }
-                ],
-                mouvements: [
-                    { id: 1, date: '2026-01-01', type: 'Départ', nom: 'Yao', prenom: 'Rodrigue',
-                        detail: 'Déménagement vers Abidjan-Yopougon', genre: 'H', ville: 'Man' },
-                    { id: 2, date: '2026-02-01', type: 'Rétrogradé', nom: 'TIEU', prenom: 'Sylvestre',
-                        detail: 'Chute/Rétrograde', genre: 'H', ville: 'Man' },
-                    { id: 3, date: '2026-04-01', type: 'Départ', nom: 'Golou Yolande', prenom: '',
-                        detail: 'Déménagement vers Abidjan-Yopougon', genre: 'F', ville: 'Man' },
-                    { id: 4, date: '2026-06-01', type: 'Arrivée', nom: 'Kouamé', prenom: 'Kouakou Wilfried Gervais',
-                        detail: 'Venu de Daloa', genre: 'H', ville: 'Man' },
-                    { id: 5, date: '2026-07-01', type: 'Arrivée', nom: 'Kone', prenom: 'Gba Didier',
-                        detail: 'Venu de Bouaké', genre: 'H', ville: 'Man' },
-                    { id: 6, date: '2026-07-01', type: 'Arrivée', nom: 'Kahoué', prenom: 'Henri',
-                        detail: 'Venu de Bouaké', genre: 'H', ville: 'Man' },
-                    { id: 7, date: '2026-07-01', type: 'Arrivée', nom: 'Messou', prenom: 'Estelle',
-                        detail: 'Venue de Bouaké', genre: 'F', ville: 'Man' },
-                    { id: 8, date: '2026-07-01', type: 'Arrivée', nom: 'Kahoué', prenom: 'Soloange',
-                        detail: 'Venue de Bouaké', genre: 'F', ville: 'Man' },
-                    { id: 9, date: '2026-07-01', type: 'Arrivée', nom: 'Gué', prenom: 'Tiah Ruth',
-                        detail: 'Venue de Bouaké', genre: 'F', ville: 'Man' }
-                ],
+                membres: [],   // <--- vide
+                mouvements: [], // <--- vide
+                // Quelques exemples de statistiques mensuelles pour illustrer la carte
                 statsM: {
                     '2025-01-Man': { effH: 15, effF: 7, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
                         depH: 1, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
@@ -957,9 +863,9 @@
 
         function loadData() {
             try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const data = JSON.parse(saved); if (!data
-                        .config) data.config = getDefaultData().config; if (!data.membres) data.membres = getDefaultData()
-                        .membres; if (!data.mouvements) data.mouvements = getDefaultData().mouvements; if (!data.statsM)
-                    data.statsM = getDefaultData().statsM; return data; } } catch (e) { }
+                        .config) data.config = getDefaultData().config; if (!data.membres) data.membres = []; if (!data
+                        .mouvements) data.mouvements = []; if (!data.statsM) data.statsM = getDefaultData().statsM; return data; } }
+            catch (e) { }
             return getDefaultData();
         }
         const DB = loadData();
@@ -1100,17 +1006,14 @@
         }
 
         // ============================================================
-        // PAGE ACCUEIL — sans les statistiques
+        // PAGE ACCUEIL
         // ============================================================
         function buildAccueil(container) {
             container.innerHTML = `
-              <!-- Bannière de bienvenue -->
               <div class="church-banner" style="text-align:center;">
                 <h2 style="font-size:22px; margin-bottom:6px;">Bienvenu sur le site officiel des statistiques</h2>
                 <p style="font-size:16px; color:rgba(255,255,255,0.9);">de l'Église du Christ Internationale de Côte d'Ivoire</p>
               </div>
-
-              <!-- Grille des fonctionnalités -->
               <h3 style="margin:12px 0 6px;font-size:14px;font-weight:700;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;">Fonctionnalités principales</h3>
               <div class="feature-grid">
                 <div class="feature-card">
@@ -1154,7 +1057,7 @@
         }
 
         // ============================================================
-        // PAGE MEMBRES — avec PAGINATION (10 par page)
+        // PAGE MEMBRES
         // ============================================================
         let membresPage = 1;
         const MEMBRES_PER_PAGE = 10;
@@ -1220,7 +1123,6 @@
                 return match;
             });
 
-            // Pagination
             const total = data.length;
             const totalPages = Math.ceil(total / MEMBRES_PER_PAGE);
             if (membresPage > totalPages) membresPage = totalPages || 1;
@@ -1261,7 +1163,6 @@
                 ).join('');
             }
 
-            // Pagination controls
             const pagination = document.getElementById('membres-pagination');
             if (pagination) {
                 let html = '';
@@ -1282,7 +1183,7 @@
         }
 
         // ============================================================
-        // PAGE SAISIE (inchangée)
+        // PAGE SAISIE
         // ============================================================
         let selectedMembre = null;
 
@@ -1371,7 +1272,7 @@
             buildMembres(document.getElementById('page-membres')); }
 
         // ============================================================
-        // PAGE MOUVEMENTS (inchangée, avec pagination déjà présente)
+        // PAGE MOUVEMENTS
         // ============================================================
         let mouvPage = 1;
         const MOUV_PER_PAGE = 10;
@@ -1585,7 +1486,7 @@
             updateBadges(); }
 
         // ============================================================
-        // PAGE STATS (inchangée)
+        // PAGE STATS
         // ============================================================
         function buildStats(container) {
             const yearSel = new Date().getFullYear();
@@ -2066,7 +1967,7 @@
         }
 
         // ============================================================
-        // PAGE CARTOGRAPHIE — avec effectif de fin de mois
+        // PAGE CARTOGRAPHIE — effectif de fin de mois
         // ============================================================
         function buildCarte(container) {
             const villes = getCitiesList();
@@ -2120,14 +2021,13 @@
             updateCarte();
         }
 
-        // ========== FONCTION UPDATE CARTE CORRIGÉE ==========
         function updateCarte() {
             if (!mapInstance) return;
             const villeFiltre = document.getElementById('carte-filtre-ville')?.value || 'Toutes';
             const annee = document.getElementById('carte-filtre-annee')?.value || '2025';
             const mois = document.getElementById('carte-filtre-mois')?.value || '01';
 
-            // Supprimer les anciens marqueurs
+            // Nettoyer les anciens marqueurs
             mapInstance.eachLayer(layer => {
                 if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
                     mapInstance.removeLayer(layer);
@@ -2141,10 +2041,10 @@
                 let key = annee + '-' + mois + '-' + v;
                 const data = DB.statsM[key];
                 if (data) {
-                    // Calcul de l'effectif fin (identique à celui du tableau)
-                    const finH = (data.effH || 0) + (data.baptH || 0) + (data.restH || 0) + (data.arrH || 0) 
+                    // Calcul de l'effectif fin (identique au tableau)
+                    const finH = (data.effH || 0) + (data.baptH || 0) + (data.restH || 0) + (data.arrH || 0)
                                  - (data.depH || 0) - (data.retroH || 0) - (data.decH || 0);
-                    const finF = (data.effF || 0) + (data.baptF || 0) + (data.restF || 0) + (data.arrF || 0) 
+                    const finF = (data.effF || 0) + (data.baptF || 0) + (data.restF || 0) + (data.arrF || 0)
                                  - (data.depF || 0) - (data.retroF || 0) - (data.decF || 0);
                     totalParVille[v] = { H: finH, F: finF };
                 } else {
@@ -2161,9 +2061,6 @@
                 if (!villesAvecCoords.includes(v)) return;
                 const coords = CITY_COORDS[v];
                 const total = data.H + data.F;
-                if (total === 0) {
-                    // On peut quand même afficher un cercle avec 0 (optionnel)
-                }
                 hasData = true;
                 const color = total > 20 ? '#10B981' : total > 10 ? '#F59E0B' : '#EF4444';
                 const radius = 8 + Math.min(total, 30) * 0.5;
@@ -2181,20 +2078,20 @@
                 marker.bindTooltip(`${v} : ${total}`, { permanent: false, direction: 'top' });
             });
 
-            // Si aucune donnée, afficher un message
+            // Message si aucune donnée
             if (!hasData) {
-                L.marker([7.54, -5.55], { 
-                    icon: L.divIcon({ 
-                        className: 'empty-marker', 
+                L.marker([7.54, -5.55], {
+                    icon: L.divIcon({
+                        className: 'empty-marker',
                         html: 'Aucune donnée pour ce mois/ville',
-                        iconSize: [120, 30] 
-                    }) 
+                        iconSize: [120, 30]
+                    })
                 }).addTo(mapInstance);
             }
         }
 
         // ============================================================
-        // PAGE EXPORT (inchangée)
+        // PAGE EXPORT
         // ============================================================
         function buildExport(container) {
             const stats = calcStats();
