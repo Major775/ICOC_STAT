@@ -2066,7 +2066,7 @@
         }
 
         // ============================================================
-        // PAGE CARTOGRAPHIE (inchangée)
+        // PAGE CARTOGRAPHIE — avec effectif de fin de mois
         // ============================================================
         function buildCarte(container) {
             const villes = getCitiesList();
@@ -2088,7 +2088,7 @@
 
             container.innerHTML =
                 `<div class="card">
-              <div class="card-head"><span class="card-title"><i class="fas fa-map-marked-alt" style="color:var(--accent2);margin-right:6px"></i>Cartographie des effectifs</span></div>
+              <div class="card-head"><span class="card-title"><i class="fas fa-map-marked-alt" style="color:var(--accent2);margin-right:6px"></i>Cartographie des effectifs (fin de mois)</span></div>
               <div class="card-body">
                 <div class="fbar" style="margin-bottom:14px;">
                   <label style="font-size:11px; font-weight:600; color:var(--text2);">Ville :</label>
@@ -2120,12 +2120,14 @@
             updateCarte();
         }
 
+        // ========== FONCTION UPDATE CARTE CORRIGÉE ==========
         function updateCarte() {
             if (!mapInstance) return;
             const villeFiltre = document.getElementById('carte-filtre-ville')?.value || 'Toutes';
             const annee = document.getElementById('carte-filtre-annee')?.value || '2025';
             const mois = document.getElementById('carte-filtre-mois')?.value || '01';
 
+            // Supprimer les anciens marqueurs
             mapInstance.eachLayer(layer => {
                 if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
                     mapInstance.removeLayer(layer);
@@ -2134,27 +2136,35 @@
 
             const villeList = villeFiltre === 'Toutes' ? getCitiesList() : [villeFiltre];
             let totalParVille = {};
+
             villeList.forEach(v => {
-                const membresVille = DB.membres.filter(m => m.ville === v);
-                let totalMembres = membresVille.length;
                 let key = annee + '-' + mois + '-' + v;
-                const data = DB.statsM[key] || {};
-                if (data.effH !== undefined || data.effF !== undefined) {
-                    totalParVille[v] = { H: data.effH || 0, F: data.effF || 0 };
+                const data = DB.statsM[key];
+                if (data) {
+                    // Calcul de l'effectif fin (identique à celui du tableau)
+                    const finH = (data.effH || 0) + (data.baptH || 0) + (data.restH || 0) + (data.arrH || 0) 
+                                 - (data.depH || 0) - (data.retroH || 0) - (data.decH || 0);
+                    const finF = (data.effF || 0) + (data.baptF || 0) + (data.restF || 0) + (data.arrF || 0) 
+                                 - (data.depF || 0) - (data.retroF || 0) - (data.decF || 0);
+                    totalParVille[v] = { H: finH, F: finF };
                 } else {
-                    const H = membresVille.filter(m => m.genre === 'H').length;
-                    const F = membresVille.filter(m => m.genre === 'F').length;
-                    totalParVille[v] = { H, F };
+                    // Pas de données pour ce mois/ville → on n'affiche rien
+                    totalParVille[v] = null;
                 }
             });
 
             const villesAvecCoords = Object.keys(CITY_COORDS);
+            let hasData = false;
             Object.keys(totalParVille).forEach(v => {
+                const data = totalParVille[v];
+                if (!data) return;
                 if (!villesAvecCoords.includes(v)) return;
                 const coords = CITY_COORDS[v];
-                const data = totalParVille[v];
                 const total = data.H + data.F;
-                if (total === 0) return;
+                if (total === 0) {
+                    // On peut quand même afficher un cercle avec 0 (optionnel)
+                }
+                hasData = true;
                 const color = total > 20 ? '#10B981' : total > 10 ? '#F59E0B' : '#EF4444';
                 const radius = 8 + Math.min(total, 30) * 0.5;
                 const marker = L.circleMarker(coords, {
@@ -2166,14 +2176,20 @@
                     fillOpacity: 0.8
                 }).addTo(mapInstance);
                 marker.bindPopup(
-                    `<strong style="font-size:14px;">${v}</strong><br>Frères : ${data.H}<br>Sœurs : ${data.F}<br><strong>Total : ${total}</strong>`
-                    );
+                    `<strong style="font-size:14px;">${v}</strong><br>Frères : ${data.H}<br>Sœurs : ${data.F}<br><strong>Total : ${total}</strong> (fin de mois)`
+                );
                 marker.bindTooltip(`${v} : ${total}`, { permanent: false, direction: 'top' });
             });
 
-            if (Object.keys(totalParVille).filter(v => totalParVille[v].H + totalParVille[v].F > 0).length === 0) {
-                L.marker([7.54, -5.55], { icon: L.divIcon({ className: 'empty-marker', html: 'Aucune donnée',
-                        iconSize: [120, 30] }) }).addTo(mapInstance);
+            // Si aucune donnée, afficher un message
+            if (!hasData) {
+                L.marker([7.54, -5.55], { 
+                    icon: L.divIcon({ 
+                        className: 'empty-marker', 
+                        html: 'Aucune donnée pour ce mois/ville',
+                        iconSize: [120, 30] 
+                    }) 
+                }).addTo(mapInstance);
             }
         }
 
