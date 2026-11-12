@@ -1,0 +1,2960 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Église de Man — Suivi des Membres</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+    </script>
+    <style>
+        /* ========== BASE ========== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0F172A;
+            --bg2: #1E293B;
+            --bg3: #162033;
+            --sidebar: #0A1628;
+            --text: #E2E8F0;
+            --text2: #94A3B8;
+            --text3: #475569;
+            --border: rgba(255, 255, 255, 0.07);
+            --border2: rgba(255, 255, 255, 0.12);
+            --accent: #6366F1;
+            --accent2: #818CF8;
+            --accentbg: rgba(99, 102, 241, 0.15);
+            --green: #10B981;
+            --greenbg: rgba(16, 185, 129, 0.15);
+            --red: #EF4444;
+            --redbg: rgba(239, 68, 68, 0.15);
+            --yellow: #F59E0B;
+            --yellowbg: rgba(245, 158, 11, 0.15);
+            --blue: #3B82F6;
+            --bluebg: rgba(59, 130, 246, 0.15);
+            --purple: #A855F7;
+            --purplebg: rgba(168, 85, 247, 0.15);
+            --gold: #F59E0B;
+            --goldbg: rgba(245, 158, 11, 0.12);
+            --radius: 10px;
+            --radius2: 14px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        body.light {
+            --bg: #F8FAFC;
+            --bg2: #fff;
+            --bg3: #F1F5F9;
+            --sidebar: #fff;
+            --text: #1E293B;
+            --text2: #64748B;
+            --text3: #94A3B8;
+            --border: rgba(0, 0, 0, 0.06);
+            --border2: rgba(0, 0, 0, 0.1);
+            --accent: #4F46E5;
+            --accent2: #6366F1;
+            --accentbg: rgba(79, 70, 229, 0.08);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        html {
+            font-size: 13px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+        body.light ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sb {
+            width: 220px;
+            min-width: 220px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 200;
+            overflow-y: auto;
+        }
+        .sb-logo {
+            padding: 16px 14px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sb-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sb-name {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text);
+        }
+        .sb-tag {
+            font-size: 9px;
+            color: var(--text3);
+            font-weight: 500;
+        }
+        .sb-section {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            color: var(--text3);
+            padding: 14px 14px 4px;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 8px 14px;
+            background: none;
+            border: none;
+            border-left: 3px solid transparent;
+            color: var(--text2);
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .15s;
+            text-align: left;
+        }
+        .nav-btn i {
+            width: 15px;
+            text-align: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+        }
+        .nav-btn.active {
+            background: rgba(124, 58, 237, 0.15);
+            color: #A78BFA;
+            border-left-color: #7C3AED;
+        }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--redbg);
+            color: var(--red);
+            border-radius: 10px;
+            padding: 1px 6px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+        .sb-bottom {
+            margin-top: auto;
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ========== MAIN ========== */
+        .main {
+            margin-left: 220px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--sidebar);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tb-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .tb-space {
+            flex: 1;
+        }
+
+        .page {
+            display: none;
+            padding: 20px;
+            min-height: calc(100vh - 52px);
+        }
+        .page.active {
+            display: block;
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius2);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .card-head {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text);
+            flex: 1;
+        }
+        .card-body {
+            padding: 16px;
+        }
+
+        /* ========== GRID ========== */
+        .g4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .g3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* ========== STATS ========== */
+        .stat {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius2);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: border-color .2s;
+        }
+        .stat:hover {
+            border-color: var(--accent);
+        }
+        .stat-ico {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .stat-val {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--text);
+        }
+        .stat-lbl {
+            font-size: 10.5px;
+            color: var(--text3);
+            margin-top: 3px;
+        }
+        .stat-sub {
+            font-size: 10px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border2);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            white-space: nowrap;
+            background: transparent;
+            color: var(--text);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+        }
+        .btn-primary:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text2);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+        }
+        .btn-danger {
+            background: var(--redbg);
+            color: var(--red);
+            border-color: transparent;
+        }
+        .btn-danger:hover {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-success {
+            background: var(--greenbg);
+            color: var(--green);
+            border-color: transparent;
+        }
+        .btn-success:hover {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-warn {
+            background: var(--yellowbg);
+            color: var(--yellow);
+            border-color: transparent;
+        }
+        .btn-warn:hover {
+            background: var(--yellow);
+            color: #fff;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* ========== BADGES ========== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .b-green {
+            background: var(--greenbg);
+            color: var(--green);
+        }
+        .b-red {
+            background: var(--redbg);
+            color: var(--red);
+        }
+        .b-blue {
+            background: var(--bluebg);
+            color: var(--blue);
+        }
+        .b-yellow {
+            background: var(--yellowbg);
+            color: var(--yellow);
+        }
+        .b-purple {
+            background: var(--purplebg);
+            color: var(--purple);
+        }
+        .b-gray {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text2);
+        }
+        .b-gold {
+            background: var(--goldbg);
+            color: var(--gold);
+        }
+
+        /* ========== FORM ========== */
+        input,
+        select,
+        textarea {
+            background: var(--bg3);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            padding: 8px 11px;
+            width: 100%;
+            transition: border-color .15s;
+            outline: none;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+        }
+        .fld {
+            margin-bottom: 11px;
+        }
+        .fld-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 4px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        /* ========== TABLE ========== */
+        table.dtable {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        table.dtable thead th {
+            background: var(--bg3);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text3);
+            padding: 9px 11px;
+            white-space: nowrap;
+        }
+        table.dtable tbody td {
+            padding: 9px 11px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            color: var(--text);
+        }
+        table.dtable tbody tr:hover td {
+            background: var(--bg3);
+            cursor: default;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 14px 0;
+        }
+        .empty {
+            text-align: center;
+            padding: 36px;
+            color: var(--text3);
+        }
+        .empty i {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 10px;
+            opacity: .4;
+        }
+
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg2);
+            border: 1px solid var(--border2);
+            border-radius: 16px;
+            width: 680px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+        .modal-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--bg2);
+            z-index: 1;
+        }
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-foot {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            position: sticky;
+            bottom: 0;
+            background: var(--bg2);
+        }
+
+        /* ========== FILTER BAR ========== */
+        .fbar {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius2);
+        }
+        .fbar input,
+        .fbar select {
+            width: auto;
+            min-width: 120px;
+        }
+
+        /* ========== NOTIFICATIONS ========== */
+        .notif {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .notif-item {
+            background: var(--bg2);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: var(--shadow);
+            pointer-events: auto;
+            animation: slideIn .3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========== CHURCH BANNER ========== */
+        .church-banner {
+            background: linear-gradient(135deg, #1e0a3c, #2d1454, #1a0835);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .church-banner {
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 170px;
+            padding-right: 170px;
+        }
+        .banner-logo {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .banner-logo img {
+            max-height: 72px;
+            max-width: 130px;
+            object-fit: contain;
+            display: block;
+        }
+        .banner-cross {
+            font-size: 80px;
+            line-height: 1;
+            opacity: .06;
+            color: #fff;
+        }
+        .banner-logo-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .banner-logo-actions .btn {
+            padding: 2px 7px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.75);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .logo-drop {
+            width: 120px;
+            height: 80px;
+            border: 1.5px dashed rgba(167, 139, 250, 0.55);
+            border-radius: 12px;
+            background: rgba(124, 58, 237, 0.12);
+            color: #C4B5FD;
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .logo-drop i {
+            font-size: 18px;
+        }
+        .logo-drop:hover {
+            background: rgba(124, 58, 237, 0.25);
+        }
+        .sb-mark.has-logo,
+        .login-mark.has-logo {
+            background: none;
+        }
+        .sb-mark img,
+        .login-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: inherit;
+        }
+
+        .church-banner h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .church-banner p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .church-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(124, 58, 237, 0.25);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #A78BFA;
+            margin-bottom: 12px;
+        }
+
+        /* ========== PAGINATION ========== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .pagination button {
+            padding: 4px 12px;
+        }
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        /* ========== FEATURE CARDS (ACCUEIL) ========== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .feature-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius2);
+            padding: 20px 18px;
+            transition: transform .15s, border-color .15s;
+            display: flex;
+            flex-direction: column;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .feature-card .fc-icon {
+            font-size: 26px;
+            color: var(--accent2);
+            margin-bottom: 10px;
+        }
+        .feature-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .feature-card p {
+            font-size: 11.5px;
+            color: var(--text2);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+        .feature-card .btn {
+            align-self: flex-start;
+        }
+
+        /* ========== PAGE D'ACCUEIL (hero) ========== */
+        body.guest .sb,
+        body.guest .topbar {
+            display: none;
+        }
+        body.guest .main {
+            margin-left: 0;
+        }
+        body.guest .page {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        body.guest .feature-card .btn {
+            display: none;
+        }
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 26px 40px 44px;
+            margin-bottom: 26px;
+        }
+        .hero-blob {
+            position: absolute;
+            pointer-events: none;
+        }
+        .hero-blob.b1 {
+            width: 600px;
+            height: 470px;
+            right: -150px;
+            top: -190px;
+            background: linear-gradient(140deg, #4F46E5, #1E3A8A);
+            border-radius: 58% 42% 38% 62% / 55% 60% 40% 45%;
+        }
+        .hero-blob.b2 {
+            width: 420px;
+            height: 170px;
+            left: 34%;
+            bottom: -110px;
+            background: linear-gradient(90deg, #EA580C, #F59E0B);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+        .hero-blob.b3 {
+            width: 150px;
+            height: 190px;
+            right: -80px;
+            bottom: 40px;
+            background: #38BDF8;
+            border-radius: 60% 40% 45% 55% / 50% 55% 45% 50%;
+            opacity: .9;
+        }
+        .lp-nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 26px;
+            margin-bottom: 34px;
+        }
+        .lp-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 13.5px;
+            margin-right: 14px;
+        }
+        .lp-brand small {
+            display: block;
+            font-size: 10.5px;
+            font-weight: 500;
+            color: var(--text3);
+        }
+        .lp-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .lp-mark.has-logo {
+            background: none;
+        }
+        .lp-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .lp-nav a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text2);
+            text-decoration: none;
+        }
+        .lp-nav a.on,
+        .lp-nav a:hover {
+            color: #F97316;
+        }
+        .hero-grid {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+            gap: 30px;
+            align-items: center;
+        }
+        .hero-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .hero-brand img {
+            height: 54px;
+            max-width: 130px;
+            object-fit: contain;
+            display: block;
+        }
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--accent2);
+            background: var(--accentbg);
+            border-radius: 20px;
+            padding: 5px 12px;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-size: 40px;
+            line-height: 1.12;
+            font-weight: 700;
+            letter-spacing: -.8px;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .hero h1 .h-a {
+            color: var(--accent2);
+        }
+        .hero h1 .h-b {
+            color: #F97316;
+        }
+        .hero-sub {
+            font-size: 15px;
+            line-height: 1.55;
+            color: var(--text2);
+            max-width: 520px;
+            margin-bottom: 22px;
+        }
+        .hero-sub strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .hero-login {
+            background: var(--bg3);
+            border: 1px solid var(--border2);
+            border-radius: 16px;
+            padding: 16px 18px 12px;
+            max-width: 540px;
+        }
+        .hero-login-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .hero-login-title i {
+            color: #F97316;
+            margin-right: 7px;
+        }
+        .lp-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .lp-form .fld {
+            margin-bottom: 0;
+        }
+        .lp-form input,
+        .lp-form select {
+            background: var(--bg2);
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+        .lp-form .btn {
+            grid-column: 1 / -1;
+            justify-content: center;
+            padding: 11px;
+            font-size: 13.5px;
+            border-radius: 10px;
+        }
+        .login-err {
+            grid-column: 1 / -1;
+            min-height: 16px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--red);
+        }
+        .hero-stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .hero-stat {
+            background: var(--bg3);
+            border: 1px solid var(--border2);
+            border-radius: 14px;
+            padding: 11px 16px;
+            min-width: 104px;
+        }
+        .hero-stat b {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .hero-stat span {
+            font-size: 10.5px;
+            color: var(--text3);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .hero-cta .btn {
+            padding: 10px 18px;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+        .hero-art svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .sec-title {
+            margin: 4px 0 4px;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .sec-sub {
+            font-size: 12.5px;
+            color: var(--text2);
+            margin-bottom: 4px;
+        }
+        .feature-card .fc-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--accentbg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 14px;
+        }
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 16px 0 10px;
+        }
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius2);
+            padding: 18px;
+        }
+        .step-n {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #F97316;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .step h4 {
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .step p {
+            font-size: 11.5px;
+            color: var(--text2);
+            line-height: 1.45;
+        }
+        .lp-foot {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text3);
+            padding: 18px 0 6px;
+        }
+
+        /* ========== RESPONSIVE (tablette & téléphone) ========== */
+        .menu-btn {
+            display: none;
+            padding: 8px 11px;
+            font-size: 15px;
+        }
+        .sb-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 190;
+        }
+        .tb-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .card-body,
+        .modal {
+            -webkit-overflow-scrolling: touch;
+        }
+        @media(max-width:1200px) {
+            #top-info {
+                display: none;
+            }
+        }
+        @media(max-width:1100px) {
+            .hero {
+                padding: 22px 22px 34px;
+            }
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-art {
+                max-width: 520px;
+                width: 100%;
+                margin: 0 auto;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero-blob.b1 {
+                opacity: .22;
+            }
+            .hero-blob.b2,
+            .hero-blob.b3 {
+                display: none;
+            }
+        }
+        /* Tablette : le menu latéral devient un tiroir ouvert par le bouton ☰ */
+        @media(max-width:900px) {
+            .menu-btn {
+                display: inline-flex;
+            }
+            .sb {
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+                box-shadow: var(--shadow);
+            }
+            body.nav-open .sb {
+                transform: none;
+            }
+            body.nav-open .sb-backdrop {
+                display: block;
+            }
+            .nav-btn {
+                padding: 12px 16px;
+                font-size: 13.5px;
+            }
+            .main {
+                margin-left: 0;
+                min-width: 0;
+            }
+            .topbar {
+                padding: 0 12px;
+                gap: 8px;
+            }
+            .page {
+                padding: 14px;
+            }
+            .g4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .g2,
+            .g3 {
+                grid-template-columns: 1fr !important;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            .lp-nav a {
+                display: none;
+            }
+            .fbar input,
+            .fbar select {
+                flex: 1 1 150px;
+                min-width: 0;
+                max-width: none !important;
+            }
+            table.dtable tbody td {
+                white-space: nowrap;
+            }
+            .modal-overlay {
+                align-items: flex-end;
+            }
+            .modal {
+                width: 100%;
+                max-width: 100%;
+                max-height: 92vh;
+                border-radius: 16px 16px 0 0;
+            }
+        }
+        /* Téléphone */
+        @media(max-width:600px) {
+            /* 16 px évite le zoom automatique d'iOS quand on touche un champ */
+            input,
+            select,
+            textarea {
+                font-size: 16px !important;
+                padding: 10px 12px;
+            }
+            .btn {
+                padding: 9px 14px;
+            }
+            .btn-sm {
+                padding: 7px 11px;
+            }
+            .topbar .btn-group {
+                flex-wrap: nowrap;
+                gap: 6px;
+            }
+            .topbar .btn-group .btn {
+                font-size: 0;
+                gap: 0;
+                padding: 9px 11px;
+            }
+            .topbar .btn-group .btn i {
+                font-size: 14px;
+            }
+            #session-chip {
+                max-width: 96px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+            }
+            .page,
+            body.guest .page {
+                padding: 10px;
+            }
+            .hero {
+                padding: 16px 16px 26px;
+                border-radius: 16px;
+            }
+            .lp-nav {
+                margin-bottom: 22px;
+                gap: 10px;
+            }
+            .hero h1 {
+                font-size: 27px;
+                letter-spacing: -.4px;
+            }
+            .hero-sub {
+                font-size: 14px;
+            }
+            .lp-form {
+                grid-template-columns: 1fr;
+            }
+            .hero-stats {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+            .hero-cta .btn {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .g4 {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px;
+            }
+            .stat {
+                padding: 11px;
+                gap: 9px;
+            }
+            .stat-val {
+                font-size: 20px;
+            }
+            .card-head {
+                padding: 11px 12px;
+            }
+            .card-body {
+                padding: 12px;
+            }
+            .modal-body {
+                padding: 14px;
+            }
+            .notif {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <aside class="sb">
+            <div class="sb-logo">
+                <div class="sb-mark" id="sb-mark">✝</div>
+                <div>
+                    <div class="sb-name" id="sb-name">Église du Christ</div>
+                    <div class="sb-tag">Gestion des Membres</div>
+                </div>
+            </div>
+            <div class="sb-section">Principal</div>
+            <button class="nav-btn active" data-page="accueil"><i class="fas fa-home"></i>Accueil</button>
+            <button class="nav-btn" data-page="membres"><i class="fas fa-users"></i>Registre des membres</button>
+            <button class="nav-btn" data-page="saisie"><i class="fas fa-user-plus"></i>Ajouter un membre</button>
+            <div class="sb-section">Suivi & Mouvements</div>
+            <button class="nav-btn" data-page="mouvements"><i class="fas fa-arrows-alt-h"></i>Mouvements <span
+                    class="nav-badge" id="badge-mouv">0</span></button>
+            <button class="nav-btn" data-page="stats"><i class="fas fa-chart-bar"></i>Statistiques mensuelles</button>
+            <div class="sb-section">Données</div>
+            <button class="nav-btn" data-page="export"><i class="fas fa-download"></i>Export & Rapports</button>
+            <div id="nav-admin" style="display:none">
+                <div class="sb-section">Administration</div>
+                <button class="nav-btn" data-page="acces"><i class="fas fa-key"></i>Codes d'accès</button>
+            </div>
+            <div class="sb-bottom"><select id="theme-sel" style="width:100%">
+                    <option value="dark">🌙 Thème sombre</option>
+                    <option value="light">☀️ Thème clair</option>
+                </select></div>
+        </aside>
+
+        <div class="sb-backdrop" onclick="toggleNav(false)"></div>
+        <main class="main">
+            <header class="topbar">
+                <button class="btn btn-ghost menu-btn" id="menu-btn" onclick="toggleNav()" aria-label="Ouvrir le menu"><i
+                        class="fas fa-bars"></i></button>
+                <span class="tb-title" id="top-title">Tableau de bord</span>
+                <div class="tb-space"></div>
+                <div class="btn-group" id="top-actions" style="display:none">
+                    <span class="badge b-purple" id="session-chip"></span>
+                    <span id="top-info" style="font-size:11px;color:var(--text3)"></span>
+                    <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i>Export
+                        CSV</button>
+                    <button class="btn btn-primary btn-sm" onclick="navigateTo('saisie')"><i
+                            class="fas fa-user-plus"></i>Nouveau membre</button>
+                    <button class="btn btn-ghost btn-sm" onclick="logout()" title="Se déconnecter"><i
+                            class="fas fa-sign-out-alt"></i>Déconnexion</button>
+                </div>
+            </header>
+            <div id="page-accueil" class="page active"></div>
+            <div id="page-membres" class="page"></div>
+            <div id="page-saisie" class="page"></div>
+            <div id="page-mouvements" class="page"></div>
+            <div id="page-stats" class="page"></div>
+            <div id="page-acces" class="page"></div>
+            <div id="page-export" class="page"></div>
+        </main>
+    </div>
+
+    <input type="file" id="logo-file" accept="image/*" style="display:none">
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="modal-box">
+            <div class="modal-head"><span class="modal-title" id="modal-title">Détails</span><button
+                    class="btn btn-ghost btn-sm" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-foot" id="modal-foot"></div>
+        </div>
+    </div>
+    <div class="notif" id="notif-zone"></div>
+
+    <script>
+        // ============================================================
+        // DONNÉES — Tableaux vides pour les membres et mouvements
+        // ============================================================
+        const STORAGE_KEY = 'eglise_man_data';
+
+        function getDefaultData() {
+            return {
+                config: { ville: 'MAN', region: 'TONKPI', zone: 'MAN', dirigeant: 'Couple GNADJI Eugène & Sandrine',
+                    contact: '07 49 83 31 57' },
+                // Codes d'accès par défaut — modifiables depuis le menu "Codes d'accès" (administrateur)
+                codes: {
+                    admin: 'ADMIN-2026',
+                    villes: { 'Man': 'MAN-4821', 'Abidjan': 'ABJ-7356', 'Bouaké': 'BKE-2947', 'Daloa': 'DAL-6183',
+                        'Yopougon': 'YOP-5072', 'Bangolo': 'BGL-3618', 'Zouan-Hounien': 'ZHN-9245' }
+                },
+                membres: [],   // <--- vide
+                mouvements: [], // <--- vide
+                // Quelques exemples de statistiques mensuelles d'exemple
+                statsM: {
+                    '2025-01-Man': { effH: 15, effF: 7, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                        depH: 1, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-02-Man': { effH: 14, effF: 7, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                        depH: 0, depF: 0, retroH: 1, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-03-Man': { effH: 13, effF: 7, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                        depH: 0, depF: 1, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-04-Man': { effH: 13, effF: 6, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                        depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-05-Man': { effH: 13, effF: 6, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 1, arrF: 0,
+                        depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-06-Man': { effH: 14, effF: 6, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 2, arrF: 0,
+                        depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 },
+                    '2025-07-Man': { effH: 16, effF: 9, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 2, arrF: 3,
+                        depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 }
+                }
+            };
+        }
+
+        function loadData() {
+            try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { const data = JSON.parse(saved); if (!data
+                        .config) data.config = getDefaultData().config; if (!data.membres) data.membres = []; if (!data
+                        .mouvements) data.mouvements = []; if (!data.statsM) data.statsM = getDefaultData().statsM; return data; } }
+            catch (e) { }
+            return getDefaultData();
+        }
+        const DB = loadData();
+        if (!DB.codes || !DB.codes.villes) DB.codes = getDefaultData().codes;
+
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
+
+        // ============================================================
+        // ACCÈS PAR VILLE — session, périmètre des données, logo
+        // ============================================================
+        const SESSION_KEY = 'eglise_session';
+        const LOGO_KEY = 'eglise_logo';
+        let SESSION = null;
+        try { SESSION = JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (e) { SESSION = null; }
+        if (SESSION && SESSION.role !== 'admin' && !(SESSION.role === 'ville' && DB.codes.villes[SESSION.ville]))
+            SESSION = null;
+
+        function isAdmin() { return !!SESSION && SESSION.role === 'admin'; }
+
+        function myVille() { return SESSION && SESSION.role === 'ville' ? SESSION.ville : null; }
+
+        function normVille(v) { return String(v || '').trim().toLowerCase(); }
+
+        function inScope(item) { if (!SESSION) return false; const v = myVille(); return !v || (!!item && normVille(item.ville) === normVille(v)); }
+
+        function scopeMembres() { if (!SESSION) return []; return myVille() ? DB.membres.filter(inScope) : DB.membres; }
+
+        function scopeMouvements() { if (!SESSION) return []; return myVille() ? DB.mouvements.filter(inScope) : DB.mouvements; }
+
+        function scopeConfig() {
+            const v = myVille();
+            if (!v || normVille(v) === normVille(DB.config.ville)) return DB.config;
+            return { ville: v.toUpperCase(), region: '—', zone: '—', dirigeant: '—', contact: '—' };
+        }
+
+        function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;',
+                '>': '&gt;', '"': '&quot;', "'": '&#39;' } [c])); }
+
+        function normCode(c) { return String(c || '').trim().toUpperCase(); }
+
+        // Formulaire de connexion affiché dans la page d'accueil : choix de la ville + code
+        function accueilAccessHtml() {
+            const opts = accesVilles().map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('');
+            return `<div class="hero-login">
+                <div class="hero-login-title"><i class="fas fa-lock"></i>Accédez à l'espace de votre ville</div>
+                <div class="lp-form">
+                  <div class="fld"><label class="fld-lbl">Ville</label><select id="login-ville"><option value="">— Choisir votre ville —</option>${opts}<option value="__admin__">Administration nationale</option></select></div>
+                  <div class="fld"><label class="fld-lbl">Code d'accès</label><input type="password" id="login-code" placeholder="Code de la ville" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"></div>
+                  <button class="btn btn-primary" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i>Se connecter</button>
+                  <div class="login-err" id="login-err"></div>
+                </div>
+              </div>`;
+        }
+
+        function toggleTheme() {
+            const sel = document.getElementById('theme-sel');
+            sel.value = sel.value === 'light' ? 'dark' : 'light';
+            sel.dispatchEvent(new Event('change'));
+        }
+
+        function doLogin() {
+            const sel = document.getElementById('login-ville');
+            const input = document.getElementById('login-code');
+            const err = document.getElementById('login-err');
+            if (!sel || !input) return;
+            const who = sel.value;
+            const code = normCode(input.value);
+            if (!who) { err.textContent = 'Choisissez d\'abord votre ville.'; sel.focus(); return; }
+            if (!code) { err.textContent = 'Entrez le code de ' + (who === '__admin__' ? "l'administration" : who) + '.';
+                input.focus(); return; }
+            let session = null;
+            if (who === '__admin__') { if (code === normCode(DB.codes.admin)) session = { role: 'admin' }; }
+            else if (DB.codes.villes[who] && code === normCode(DB.codes.villes[who])) session = { role: 'ville',
+                ville: who };
+            if (!session) { err.textContent = 'Code incorrect pour ' + (who === '__admin__' ? "l'administration" : who) +
+                    '. Vérifiez auprès de votre responsable.'; input.select(); return; }
+            SESSION = session;
+            try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION)); } catch (e) { }
+            applySession();
+            navigateTo('accueil');
+            showNotification(isAdmin() ? 'Connecté en administration nationale' : 'Bienvenue, Église de ' + myVille());
+        }
+
+        function logout() {
+            try { sessionStorage.removeItem(SESSION_KEY); } catch (e) { }
+            location.reload();
+        }
+
+        function applySession() {
+            document.body.classList.toggle('guest', !SESSION);
+            document.getElementById('top-actions').style.display = SESSION ? '' : 'none';
+            document.getElementById('nav-admin').style.display = isAdmin() ? '' : 'none';
+            document.getElementById('sb-name').textContent = !SESSION ? 'Église du Christ' : isAdmin() ?
+                'Toutes les villes' : 'Église de ' + myVille();
+            document.getElementById('session-chip').textContent = !SESSION ? '' : isAdmin() ? 'Administrateur' :
+                myVille();
+            renderLogo();
+        }
+
+        // ---------- Logo importé ----------
+        function getLogo() { try { return localStorage.getItem(LOGO_KEY) || ''; } catch (e) { return ''; } }
+
+        function renderLogo() {
+            const logo = getLogo();
+            ['sb-mark', 'lp-logo'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = logo ? '<img src="' + logo + '" alt="Logo">' : '✝';
+                el.classList.toggle('has-logo', !!logo);
+            });
+            const b = document.getElementById('banner-logo');
+            if (!b) return;
+            b.innerHTML = (logo ? '<img src="' + logo + '" alt="Logo de l\'église">' : '') + (isAdmin() ?
+                '<button class="btn btn-sm" onclick="pickLogo()"><i class="fas fa-upload"></i>' + (logo ?
+                    'Changer le logo' : 'Importer le logo') + '</button>' + (logo ?
+                    '<button class="btn btn-ghost btn-sm" onclick="removeLogo()" title="Retirer le logo"><i class="fas fa-trash"></i></button>' :
+                    '') : '');
+            b.style.display = b.innerHTML ? '' : 'none';
+        }
+
+        function pickLogo() { if (isAdmin()) document.getElementById('logo-file').click(); }
+
+        function removeLogo() {
+            if (!isAdmin() || !confirm('Retirer le logo ?')) return;
+            try { localStorage.removeItem(LOGO_KEY); } catch (e) { }
+            renderLogo();
+            showNotification('Logo retiré', 'info');
+        }
+
+        document.getElementById('logo-file').addEventListener('change', function() {
+            const file = this.files && this.files[0];
+            this.value = '';
+            if (!file || !isAdmin()) return;
+            if (file.type.indexOf('image/') !== 0) { showNotification('Choisissez un fichier image', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = new Image();
+                img.onload = function() {
+                    // Réduction à 300 px max pour rester léger dans le stockage du navigateur
+                    const max = 300;
+                    const w0 = img.naturalWidth || max,
+                        h0 = img.naturalHeight || max;
+                    const k = Math.min(1, max / Math.max(w0, h0));
+                    const cv = document.createElement('canvas');
+                    cv.width = Math.max(1, Math.round(w0 * k));
+                    cv.height = Math.max(1, Math.round(h0 * k));
+                    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+                    try {
+                        localStorage.setItem(LOGO_KEY, cv.toDataURL('image/png'));
+                        renderLogo();
+                        showNotification('Logo importé ✓');
+                    } catch (e) { showNotification('Image trop lourde, essayez un fichier plus petit', 'error'); }
+                };
+                img.onerror = function() { showNotification('Image illisible', 'error'); };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+        // ============================================================
+        // UTILITAIRES
+        // ============================================================
+        function formatDate(d) { if (!d) return '—'; try { return new Date(d + 'T00:00:00').toLocaleDateString('fr-FR'); }
+        catch { return '—'; } }
+
+        function getNextId(arr) { if (!arr || arr.length === 0) return 1; return Math.max(...arr.map(item => item.id || 0)) +
+            1; }
+
+        function showNotification(msg, type = 'success') {
+            const zone = document.getElementById('notif-zone');
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            const colors = { success: 'var(--green)', error: 'var(--red)', info: 'var(--blue)' };
+            const div = document.createElement('div');
+            div.className = 'notif-item';
+            div.innerHTML = '<i class="fas fa-' + icons[type] + '" style="color:' + colors[type] + '"></i> ' + msg;
+            zone.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        function openModal(title, body, footer) { document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = body; document.getElementById('modal-foot').innerHTML = footer ||
+                ''; document.getElementById('modal-overlay').classList.add('open'); }
+
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+        function statutBadge(s) { const cls = s === 'Actif' ? 'b-green' : s === 'Inactif' ? 'b-red' : 'b-yellow'; return (
+                '<span class="badge ' + cls + '">' + s + '</span>'); }
+
+        function genreBadge(g) { return g === 'H' ? '<span class="badge b-blue">Frère</span>' :
+            '<span class="badge b-purple">Sœur</span>'; }
+
+        function ministereBadge(m) { const map = { 'Mariés': 'b-blue', 'Mariées': 'b-purple', 'Célibataires': 'b-green',
+                'Étudiants': 'b-yellow', 'Mamans': 'b-gold', 'Veufs/Veuves': 'b-gray', 'Adolescents': 'b-red',
+                'Enfants': 'b-red' }; const cls = map[m?.trim()] || 'b-gray'; return '<span class="badge ' + cls + '">' + (m ||
+                    '').trim() + '</span>'; }
+
+        const MOUV_TYPES = ['Baptême', 'Restauration', 'Arrivée', 'Départ', 'Rétrogradé', 'Décès'];
+        const MOUV_COLORS = { 'Baptême': 'b-blue', 'Restauration': 'b-green', 'Arrivée': 'b-green', 'Départ': 'b-red',
+            'Rétrogradé': 'b-yellow', 'Décès': 'b-gray' };
+        const MOUV_ICONS = { 'Baptême': 'droplet', 'Restauration': 'undo', 'Arrivée': 'sign-in-alt', 'Départ': 'sign-out-alt',
+            'Rétrogradé': 'arrow-down', 'Décès': 'cross' };
+        const MOUV_BG = { 'Baptême': 'var(--bluebg)', 'Restauration': 'var(--greenbg)', 'Arrivée': 'var(--greenbg)',
+            'Départ': 'var(--redbg)', 'Rétrogradé': 'var(--yellowbg)', 'Décès': 'rgba(148,163,184,0.15)' };
+        const MOIS_NOMS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre',
+            'Novembre', 'Décembre'
+        ];
+        const STATS_TYPES = [
+            { label: 'Baptême', key: 'bapt' },
+            { label: 'Restauration', key: 'rest' },
+            { label: 'Arrivées', key: 'arr' },
+            { label: 'Départs', key: 'dep' },
+            { label: 'Rétrogradés', key: 'retro' },
+            { label: 'Décès', key: 'dec' }
+        ];
+
+        function calcStats() {
+            const actifs = scopeMembres().filter(m => m.statut === 'Actif');
+            const freres = actifs.filter(m => m.genre === 'H').length;
+            const soeurs = actifs.filter(m => m.genre === 'F').length;
+            const arrivals = scopeMouvements().filter(m => m.type === 'Arrivée').length;
+            const departs = scopeMouvements().filter(m => m.type === 'Départ').length;
+            const baptemes = scopeMouvements().filter(m => m.type === 'Baptême').length;
+            return { total: actifs.length, freres, soeurs, arrivals, departs, baptemes };
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        let currentPage = 'accueil';
+        let chartInstances = {};
+
+        function toggleNav(open) { document.body.classList.toggle('nav-open', open); }
+
+        function navigateTo(page) {
+            toggleNav(false);
+            if (!SESSION && page !== 'accueil') {
+                // Sans code, seule la page d'accueil est accessible
+                showNotification('Choisissez votre ville et entrez votre code pour accéder à cette page', 'info');
+                page = 'accueil';
+                setTimeout(() => { const el = document.getElementById('login-ville'); if (el) el.focus(); }, 50);
+            }
+            if (page === 'acces' && !isAdmin()) page = 'accueil';
+            document.querySelectorAll('.nav-btn[data-page]').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.querySelector('.nav-btn[data-page="' + page + '"]');
+            if (activeBtn) activeBtn.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pageEl = document.getElementById('page-' + page);
+            if (pageEl) pageEl.classList.add('active');
+            currentPage = page;
+            const titles = { accueil: 'Tableau de bord', membres: 'Registre des membres',
+                saisie: 'Ajouter / Modifier un membre', mouvements: 'Mouvements', stats: 'Statistiques mensuelles',
+                acces: "Codes d'accès", export: 'Export & Rapports' };
+            document.getElementById('top-title').textContent = titles[page] || page;
+            updateBadges();
+            renderPage(page);
+        }
+
+        function updateBadges() {
+            document.getElementById('badge-mouv').textContent = scopeMouvements().length;
+            const stats = calcStats();
+            document.getElementById('top-info').textContent = stats.total + ' membres actifs · ' + stats.freres + ' F / ' +
+                stats.soeurs + ' S';
+        }
+
+        function renderPage(page) {
+            const container = document.getElementById('page-' + page);
+            if (!container) return;
+            switch (page) {
+                case 'accueil':
+                    buildAccueil(container);
+                    break;
+                case 'membres':
+                    buildMembres(container);
+                    break;
+                case 'saisie':
+                    buildSaisie(container);
+                    break;
+                case 'mouvements':
+                    buildMouvements(container);
+                    break;
+                case 'stats':
+                    buildStats(container);
+                    break;
+                case 'acces':
+                    buildAcces(container);
+                    break;
+                case 'export':
+                    buildExport(container);
+                    break;
+            }
+        }
+
+        // ============================================================
+        // PAGE ACCUEIL
+        // ============================================================
+        function heroArt() {
+            return `<svg viewBox="0 0 600 440" role="img" aria-label="Illustration : tableaux et graphiques de statistiques" font-family="Inter, sans-serif">
+  <g fill="none" stroke="rgba(148,163,184,.22)" stroke-width="16" stroke-linecap="round">
+    <path d="M150 214a150 150 0 0 1 300 0"/><path d="M196 214a104 104 0 0 1 208 0"/><path d="M242 214a58 58 0 0 1 116 0"/>
+  </g>
+  <g stroke-linecap="round" fill="none" stroke-width="5">
+    <path d="M64 236c-10-22-6-42 8-58" stroke="#F97316"/><path d="M80 238c2-26 14-42 32-50" stroke="#38BDF8"/><path d="M96 240c10-16 24-24 40-24" stroke="#F59E0B"/>
+    <path d="M520 400c12-18 14-36 6-54" stroke="#F97316"/><path d="M540 402c16-10 26-26 28-44" stroke="#6366F1"/>
+  </g>
+  <circle cx="72" cy="176" r="6" fill="#F97316"/><circle cx="112" cy="186" r="6" fill="#38BDF8"/><circle cx="526" cy="344" r="6" fill="#F97316"/>
+  <!-- écran -->
+  <rect x="264" y="344" width="52" height="46" fill="#EA580C"/><rect x="226" y="386" width="128" height="12" rx="6" fill="#1E3A8A"/>
+  <rect x="130" y="118" width="330" height="232" rx="16" fill="#F97316"/>
+  <rect x="130" y="296" width="330" height="54" rx="16" fill="#1D4ED8"/><rect x="130" y="296" width="330" height="20" fill="#1D4ED8"/>
+  <circle cx="295" cy="324" r="10" fill="#fff"/>
+  <rect x="142" y="130" width="306" height="162" rx="8" style="fill:var(--bg2)"/>
+  <circle cx="164" cy="150" r="9" fill="#F97316"/><rect x="180" y="143" width="44" height="5" rx="2.5" fill="#38BDF8"/><rect x="180" y="153" width="30" height="5" rx="2.5" fill="#38BDF8" opacity=".5"/>
+  <circle cx="254" cy="150" r="9" fill="#F97316"/><rect x="270" y="143" width="44" height="5" rx="2.5" fill="#38BDF8"/><rect x="270" y="153" width="30" height="5" rx="2.5" fill="#38BDF8" opacity=".5"/>
+  <circle cx="410" cy="146" r="4" fill="#F97316"/><circle cx="423" cy="146" r="4" fill="#38BDF8"/><circle cx="436" cy="146" r="4" fill="#6366F1"/>
+  <g stroke="#38BDF8" stroke-width="1.6" fill="none">
+    <rect x="154" y="172" width="282" height="108"/>
+    <path d="M154 190h282M154 208h282M154 226h282M154 244h282M154 262h282M201 172v108M248 172v108M295 172v108M342 172v108M389 172v108"/>
+  </g>
+  <!-- téléphone -->
+  <rect x="62" y="248" width="104" height="176" rx="14" fill="#38BDF8"/><rect x="70" y="268" width="88" height="134" rx="4" fill="#1E3A8A"/>
+  <g stroke="rgba(255,255,255,.55)" stroke-width="1.2"><path d="M70 286h88M70 304h88M70 322h88M70 340h88M70 358h88M70 376h88M92 268v134M114 268v134M136 268v134"/></g>
+  <rect x="98" y="255" width="32" height="5" rx="2.5" fill="#1E3A8A"/><rect x="100" y="408" width="28" height="7" rx="3.5" fill="#1E3A8A"/>
+  <!-- flèche de croissance -->
+  <path d="M96 404l92-74 46 40 80-78" fill="none" stroke="#FBBF24" stroke-width="13" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M286 286l44-10-6 46z" fill="#FBBF24" stroke="#FBBF24" stroke-width="6" stroke-linejoin="round"/>
+  <!-- carte : barres -->
+  <g filter="drop-shadow(0 8px 14px rgba(2,6,23,.28))">
+  <rect x="372" y="34" width="176" height="92" rx="12" style="fill:var(--bg2)"/>
+  <path d="M396 124l-8 20 30-20z" style="fill:var(--bg2)"/>
+  <circle cx="512" cy="48" r="3.5" fill="#F97316"/><circle cx="523" cy="48" r="3.5" fill="#38BDF8"/><circle cx="534" cy="48" r="3.5" fill="#6366F1"/>
+  <rect x="386" y="58" width="54" height="54" rx="4" fill="#38BDF8"/>
+  <rect x="452" y="84" width="12" height="28" rx="2" fill="#1D4ED8"/><rect x="469" y="98" width="12" height="14" rx="2" fill="#38BDF8"/><rect x="486" y="90" width="12" height="22" rx="2" fill="#F97316"/><rect x="503" y="78" width="12" height="34" rx="2" fill="#1D4ED8"/><rect x="520" y="62" width="12" height="50" rx="2" fill="#F97316"/>
+  <!-- carte : camembert -->
+  <rect x="424" y="150" width="166" height="84" rx="12" style="fill:var(--bg2)"/>
+  <path d="M560 232l14 18-34-18z" style="fill:var(--bg2)"/>
+  <circle cx="462" cy="192" r="26" fill="#F97316"/><path d="M462 192h26a26 26 0 0 1-13 22.5z" fill="#FBBF24"/>
+  <rect x="500" y="170" width="76" height="6" rx="3" fill="#F97316"/><rect x="500" y="182" width="76" height="6" rx="3" fill="#1D4ED8"/><rect x="500" y="194" width="76" height="6" rx="3" fill="#F97316"/><rect x="500" y="206" width="56" height="6" rx="3" fill="#38BDF8"/>
+  <!-- carte : courbe -->
+  <rect x="384" y="256" width="186" height="96" rx="12" style="fill:var(--bg2)"/>
+  <g stroke="rgba(148,163,184,.3)" stroke-width="1"><path d="M398 276h158M398 294h158M398 312h158M398 330h158M424 270v68M450 270v68M476 270v68M502 270v68M528 270v68"/></g>
+  <path d="M402 318l32-22 34 20 30-24 32 30 26-36" fill="none" stroke="#38BDF8" stroke-width="3.5" stroke-linejoin="round"/>
+  <g fill="#F97316"><circle cx="402" cy="318" r="5"/><circle cx="434" cy="296" r="5"/><circle cx="468" cy="316" r="5"/><circle cx="498" cy="292" r="5"/><circle cx="530" cy="322" r="5"/><circle cx="556" cy="286" r="5"/></g>
+  <!-- carte : membres -->
+  <rect x="330" y="366" width="176" height="64" rx="12" style="fill:var(--bg2)"/>
+  <rect x="340" y="376" width="48" height="44" rx="5" fill="#F97316"/><rect x="394" y="376" width="48" height="44" rx="5" fill="#38BDF8"/><rect x="448" y="376" width="48" height="44" rx="5" fill="#1D4ED8"/>
+  <g fill="#fff"><circle cx="364" cy="391" r="8"/><rect x="350" y="405" width="28" height="3.5" rx="1.75"/><rect x="354" y="412" width="20" height="3.5" rx="1.75"/>
+  <circle cx="418" cy="391" r="8"/><rect x="404" y="405" width="28" height="3.5" rx="1.75"/><rect x="408" y="412" width="20" height="3.5" rx="1.75"/>
+  <circle cx="472" cy="391" r="8"/><rect x="458" y="405" width="28" height="3.5" rx="1.75"/><rect x="462" y="412" width="20" height="3.5" rx="1.75"/></g>
+  </g>
+</svg>`;
+        }
+
+        function buildAccueil(container) {
+            const guest = !SESSION;
+            const st = calcStats();
+            const nav = guest ? `<div class="lp-nav">
+                  <div class="lp-brand"><div class="lp-mark" id="lp-logo">✝</div><div>Église du Christ Internationale<small>Côte d'Ivoire</small></div></div>
+                  <a class="on" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">Accueil</a>
+                  <a href="#" onclick="document.getElementById('sec-features').scrollIntoView({behavior:'smooth'});return false">Fonctionnalités</a>
+                  <a href="#" onclick="document.getElementById('sec-steps').scrollIntoView({behavior:'smooth'});return false">Comment ça marche</a>
+                  <a href="#" onclick="document.getElementById('login-ville').focus();return false">Connexion</a>
+                  <div class="tb-space"></div>
+                  <button class="btn btn-sm" style="color:#fff;border-color:rgba(255,255,255,.45);background:rgba(15,23,42,.25)" onclick="toggleTheme()" title="Changer de thème"><i class="fas fa-adjust"></i>Thème</button>
+                </div>` : '';
+            const left = guest ? `
+                  <div class="hero-kicker"><i class="fas fa-chart-line"></i>Site officiel des statistiques</div>
+                  <h1><span class="h-a">Bienvenue</span> sur le site officiel des <span class="h-b">statistiques</span></h1>
+                  <p class="hero-sub">de l'<strong>Église du Christ Internationale de Côte d'Ivoire</strong>. Chaque ville saisit et suit ses membres, ses mouvements et ses statistiques mensuelles dans son propre espace.</p>
+                  ${accueilAccessHtml()}` : `
+                  <div class="hero-brand" id="banner-logo"></div>
+                  <div class="hero-kicker"><i class="fas fa-check-circle"></i>${isAdmin() ? 'Administration nationale' : 'Église de ' + esc(myVille())}</div>
+                  <h1><span class="h-a">Bienvenue</span> sur le site officiel des <span class="h-b">statistiques</span></h1>
+                  <p class="hero-sub">de l'<strong>Église du Christ Internationale de Côte d'Ivoire</strong>. ${isAdmin() ? 'Vous voyez les données de toutes les villes.' : 'Vous ne voyez et ne remplissez que les données de votre ville.'}</p>
+                  <div class="hero-stats">
+                    <div class="hero-stat"><b>${st.total}</b><span>Membres actifs</span></div>
+                    <div class="hero-stat"><b>${st.freres}</b><span>Frères</span></div>
+                    <div class="hero-stat"><b>${st.soeurs}</b><span>Sœurs</span></div>
+                    <div class="hero-stat"><b>${scopeMouvements().length}</b><span>Mouvements</span></div>
+                  </div>
+                  <div class="hero-cta">
+                    <button class="btn btn-primary" onclick="selectedMembre=null;navigateTo('saisie')"><i class="fas fa-user-plus"></i>Ajouter un membre</button>
+                    <button class="btn" onclick="navigateTo('stats')"><i class="fas fa-chart-bar"></i>Saisir les statistiques</button>
+                    <button class="btn btn-ghost" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Changer de ville</button>
+                  </div>`;
+            const feats = [
+                ['edit', "Saisie d'activités", 'Formulaire intelligent avec statut auto-calculé pour chaque membre.', 'saisie'],
+                ['users', 'Registre des membres', 'Consultation, recherche, filtrage et pagination de tous les membres.', 'membres'],
+                ['arrows-alt-h', 'Mouvements', 'Suivi des arrivées, départs, baptêmes, restaurations et rétrogradations.', 'mouvements'],
+                ['chart-bar', 'Statistiques mensuelles', 'Analyses visuelles avec graphiques interactifs, mois par mois.', 'stats'],
+                ['download', 'Export & Rapports', 'Génération de rapports imprimables et export CSV des données.', 'export']
+            ].map(f => `<div class="feature-card">
+                  <div class="fc-icon"><i class="fas fa-${f[0]}"></i></div>
+                  <h3>${f[1]}</h3>
+                  <p>${f[2]}</p>
+                  <button class="btn btn-primary btn-sm" onclick="navigateTo('${f[3]}')">Accéder</button>
+                </div>`).join('');
+            const steps = guest ? `
+              <h3 class="sec-title" id="sec-steps" style="margin-top:22px">Comment ça marche</h3>
+              <div class="steps">
+                <div class="step"><div class="step-n">1</div><div><h4>Choisissez votre ville</h4><p>Sélectionnez votre église dans la liste, en haut de cette page.</p></div></div>
+                <div class="step"><div class="step-n">2</div><div><h4>Entrez votre code</h4><p>Chaque ville a son propre code, remis par l'administration nationale.</p></div></div>
+                <div class="step"><div class="step-n">3</div><div><h4>Remplissez vos données</h4><p>Membres, mouvements et statistiques du mois — uniquement ceux de votre ville.</p></div></div>
+              </div>
+              <div class="lp-foot">Église du Christ Internationale de Côte d'Ivoire · Site officiel des statistiques</div>` : '';
+            container.innerHTML = `
+              <section class="hero">
+                <div class="hero-blob b1"></div><div class="hero-blob b2"></div><div class="hero-blob b3"></div>
+                ${nav}
+                <div class="hero-grid">
+                  <div class="hero-copy">${left}</div>
+                  <div class="hero-art">${heroArt()}</div>
+                </div>
+              </section>
+              <h3 class="sec-title" id="sec-features">Fonctionnalités principales</h3>
+              <p class="sec-sub">Tout ce qu'il faut pour suivre la vie de votre église, au même endroit.</p>
+              <div class="feature-grid">${feats}</div>
+              ${steps}
+            `;
+            renderLogo();
+        }
+
+        // ============================================================
+        // PAGE MEMBRES
+        // ============================================================
+        let membresPage = 1;
+        const MEMBRES_PER_PAGE = 10;
+
+        function buildMembres(container) {
+            const ministeres = [];
+            const dbs = [];
+            const villes = [];
+            const dirigeants = [];
+            scopeMembres().forEach(m => {
+                const min = (m.ministere || '').trim();
+                if (min && ministeres.indexOf(min) === -1) ministeres.push(min);
+                if (m.egliseMaison && dbs.indexOf(m.egliseMaison) === -1) dbs.push(m.egliseMaison);
+                if (m.ville && villes.indexOf(m.ville) === -1) villes.push(m.ville);
+                if (m.nomDirigeant && dirigeants.indexOf(m.nomDirigeant) === -1) dirigeants.push(m.nomDirigeant);
+            });
+
+            container.innerHTML =
+                `<div class="fbar">
+              <input id="m-q" placeholder="🔍 Nom, prénom, quartier..." style="max-width:220px" oninput="membresPage=1;renderTableMembres()">
+              <select id="m-genre" onchange="membresPage=1;renderTableMembres()"><option value="">Genre</option><option value="H">Frères (H)</option><option value="F">Sœurs (F)</option></select>
+              <select id="m-min" onchange="membresPage=1;renderTableMembres()"><option value="">Tous ministères</option>${ministeres.map(m => '<option>'+m+'</option>').join('')}</select>
+              <select id="m-db" onchange="membresPage=1;renderTableMembres()"><option value="">Toutes DB</option>${dbs.map(d => '<option>'+d+'</option>').join('')}</select>
+              <select id="m-ville" onchange="membresPage=1;renderTableMembres()"><option value="">Toutes villes</option>${villes.map(v => '<option>'+v+'</option>').join('')}</select>
+              <select id="m-dirigeant" onchange="membresPage=1;renderTableMembres()"><option value="">Tous dirigeants</option>${dirigeants.map(d => '<option>'+d+'</option>').join('')}</select>
+              <select id="m-statut" onchange="membresPage=1;renderTableMembres()"><option value="">Tous statuts</option><option>Actif</option><option>Inactif</option></select>
+              <div class="tb-space"></div>
+              <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i>CSV</button>
+              <button class="btn btn-primary btn-sm" onclick="selectedMembre=null;navigateTo('saisie')"><i class="fas fa-user-plus"></i>Ajouter</button>
+            </div>
+            <div class="card">
+              <div class="card-head"><span class="card-title">Registre des membres</span><span id="m-count" style="font-size:11px;color:var(--text3)"></span></div>
+              <div class="card-body" style="padding:0;overflow-x:auto">
+                <table class="dtable">
+                  <thead><tr><th>N°</th><th>Nom</th><th>Prénoms</th><th>Contact</th><th>Quartier</th><th>Genre</th><th>Ministère</th><th>Baptême</th><th>DB</th><th>Ville</th><th>Dirigeant</th><th>Formateur</th><th>Statut</th><th>Actions</th></tr></thead>
+                  <tbody id="tbody-membres"></tbody>
+                </table>
+                <div id="membres-pagination" class="pagination"></div>
+              </div>
+            </div>`;
+            renderTableMembres();
+        }
+
+        function renderTableMembres() {
+            const q = (document.getElementById('m-q')?.value || '').toLowerCase();
+            const genre = document.getElementById('m-genre')?.value || '';
+            const min = document.getElementById('m-min')?.value || '';
+            const db = document.getElementById('m-db')?.value || '';
+            const ville = document.getElementById('m-ville')?.value || '';
+            const dirigeant = document.getElementById('m-dirigeant')?.value || '';
+            const statut = document.getElementById('m-statut')?.value || '';
+
+            let data = scopeMembres().filter(m => {
+                let match = true;
+                if (q) match = match && (m.nom.toLowerCase().indexOf(q) !== -1 || m.prenoms.toLowerCase().indexOf(
+                        q) !== -1 || (m.quartier || '').toLowerCase().indexOf(q) !== -1);
+                if (genre) match = match && m.genre === genre;
+                if (min) match = match && (m.ministere || '').trim() === min;
+                if (db) match = match && m.egliseMaison === db;
+                if (ville) match = match && m.ville === ville;
+                if (dirigeant) match = match && m.nomDirigeant === dirigeant;
+                if (statut) match = match && m.statut === statut;
+                return match;
+            });
+
+            const total = data.length;
+            const totalPages = Math.ceil(total / MEMBRES_PER_PAGE);
+            if (membresPage > totalPages) membresPage = totalPages || 1;
+            if (membresPage < 1) membresPage = 1;
+            const start = (membresPage - 1) * MEMBRES_PER_PAGE;
+            const end = Math.min(start + MEMBRES_PER_PAGE, total);
+            const pageData = data.slice(start, end);
+
+            const countEl = document.getElementById('m-count');
+            if (countEl) countEl.textContent = total + ' membre(s)';
+
+            const tbody = document.getElementById('tbody-membres');
+            if (!tbody) return;
+
+            if (pageData.length === 0) {
+                tbody.innerHTML =
+                    '<tr><td colspan="14"><div class="empty"><i class="fas fa-users"></i>Aucun membre trouvé</div></td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map(m =>
+                    `<tr onclick="voirMembre(${m.id})">
+                <td style="color:var(--text3);font-size:11px">${m.id}</td>
+                <td style="font-weight:700">${m.nom}</td><td>${m.prenoms}</td>
+                <td style="font-size:11.5px">${m.contact || '—'}</td>
+                <td style="font-size:11.5px">${m.quartier || '—'}</td>
+                <td>${genreBadge(m.genre)}</td>
+                <td>${ministereBadge(m.ministere)}</td>
+                <td style="font-size:11.5px">${formatDate(m.dateBapteme)}</td>
+                <td style="font-size:11.5px">${m.egliseMaison || '—'}</td>
+                <td style="font-size:11.5px">${m.ville || '—'}</td>
+                <td style="font-size:11px;color:var(--text2)">${m.nomDirigeant || '—'}</td>
+                <td style="font-size:11px;color:var(--text2)">${m.formateur || '—'}</td>
+                <td>${statutBadge(m.statut)}</td>
+                <td onclick="event.stopPropagation()"><div class="btn-group">
+                  <button class="btn btn-ghost btn-sm" style="padding:4px 8px" onclick="editMembre(${m.id})"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-danger btn-sm" style="padding:4px 8px" onclick="deleteMembre(${m.id})"><i class="fas fa-trash"></i></button>
+                </div></td>
+              </tr>`
+                ).join('');
+            }
+
+            const pagination = document.getElementById('membres-pagination');
+            if (pagination) {
+                let html = '';
+                if (totalPages > 1) {
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="membresPage=1;renderTableMembres()" ${membresPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="membresPage=${Math.max(1, membresPage - 1)};renderTableMembres()" ${membresPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
+                    html +=
+                        `<span style="margin:0 8px;font-size:12px;color:var(--text2)">${membresPage} / ${totalPages}</span>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="membresPage=${Math.min(totalPages, membresPage + 1)};renderTableMembres()" ${membresPage === totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="membresPage=${totalPages};renderTableMembres()" ${membresPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
+                }
+                pagination.innerHTML = html;
+            }
+        }
+
+        // ============================================================
+        // PAGE SAISIE
+        // ============================================================
+        let selectedMembre = null;
+
+        function buildSaisie(container) {
+            const m = selectedMembre;
+            const dbs = [];
+            const dirigeants = [];
+            const formateurs = [];
+            const villes = [];
+            scopeMembres().forEach(x => {
+                if (x.egliseMaison && dbs.indexOf(x.egliseMaison) === -1) dbs.push(x.egliseMaison);
+                if (x.nomDirigeant && dirigeants.indexOf(x.nomDirigeant) === -1) dirigeants.push(x.nomDirigeant);
+                if (x.formateur && formateurs.indexOf(x.formateur) === -1) formateurs.push(x.formateur);
+                if (x.ville && villes.indexOf(x.ville) === -1) villes.push(x.ville);
+            });
+            container.innerHTML =
+                `<div class="card"><div class="card-head"><span class="card-title">${m ? '<i class="fas fa-edit" style="color:var(--yellow);margin-right:6px"></i>Modifier : ' + m.nom + ' ' + m.prenoms : '<i class="fas fa-user-plus" style="color:var(--green);margin-right:6px"></i>Nouveau membre'}</span>${m ? '<span class="badge b-yellow">Mode édition</span>' : ''}</div><div class="card-body"><div class="g2"><div>
+              <div class="fld"><label class="fld-lbl">Nom de famille *</label><input id="sf-nom" value="${m ? m.nom : ''}" placeholder="Ex: KONAN"></div>
+              <div class="fld"><label class="fld-lbl">Prénoms</label><input id="sf-prenoms" value="${m ? m.prenoms : ''}" placeholder="Ex: Joseph"></div>
+              <div class="fld"><label class="fld-lbl">Contact / Téléphone</label><input id="sf-contact" value="${m ? m.contact : ''}" placeholder="Ex: 07-09-86-65-92"></div>
+              <div class="fld"><label class="fld-lbl">Quartier / Localité</label><input id="sf-quartier" value="${m ? m.quartier : ''}" placeholder="Ex: Domoraud"></div>
+              <div class="fld"><label class="fld-lbl">Profession</label><input id="sf-profession" value="${m ? m.profession : ''}" placeholder="Ex: Enseignant"></div>
+              <div class="fld"><label class="fld-lbl">Genre *</label><select id="sf-genre"><option value="">— Sélectionner —</option><option value="H"${m && m.genre === 'H' ? ' selected' : ''}>H — Frère</option><option value="F"${m && m.genre === 'F' ? ' selected' : ''}>F — Sœur</option></select></div>
+              <div class="fld"><label class="fld-lbl">Ville</label><input id="sf-ville" value="${esc(myVille() || (m ? m.ville : ''))}" placeholder="Ex: Man" list="ville-list" ${myVille() ? 'disabled' : ''}><datalist id="ville-list">${villes.map(v => '<option value="'+v+'">').join('')}</datalist></div></div><div>
+              <div class="fld"><label class="fld-lbl">Date de Baptême</label><input type="date" id="sf-bapteme" value="${m ? m.dateBapteme : ''}"></div>
+              <div class="fld"><label class="fld-lbl">Ministère *</label><select id="sf-ministere"><option value="">— Sélectionner —</option>${['Mariés','Mariées','Célibataires','Étudiants','Mamans','Veufs/Veuves','Adolescents','Enfants','Autres'].map(mn => '<option'+(m && (m.ministere||'').trim() === mn ? ' selected' : '')+'>'+mn+'</option>').join('')}</select></div>
+              <div class="fld"><label class="fld-lbl">Église de Maison (DB)</label><input id="sf-db" value="${m ? m.egliseMaison : ''}" placeholder="Ex: Domoraud" list="db-list"><datalist id="db-list">${dbs.map(d => '<option value="'+d+'">').join('')}</datalist></div>
+              <div class="fld"><label class="fld-lbl">Nom du Dirigeant</label><input id="sf-dirigeantdb" value="${m ? m.nomDirigeant : ''}" placeholder="Ex: Konan Joseph" list="dirigeant-list"><datalist id="dirigeant-list">${dirigeants.map(d => '<option value="'+d+'">').join('')}</datalist></div>
+              <div class="fld"><label class="fld-lbl">Formateur/Trice</label><input id="sf-formateur" value="${m ? m.formateur : ''}" placeholder="Ex: Couple Angaman" list="form-list"><datalist id="form-list">${formateurs.map(d => '<option value="'+d+'">').join('')}</datalist></div>
+              <div class="fld"><label class="fld-lbl">Statut</label><select id="sf-statut"><option${!m || m.statut === 'Actif' ? ' selected' : ''}>Actif</option><option${m && m.statut === 'Inactif' ? ' selected' : ''}>Inactif</option></select></div>
+            </div></div>
+            <div class="btn-group" style="justify-content:center;margin-top:14px">
+              <button class="btn btn-primary" onclick="saveMembre()"><i class="fas fa-save"></i> ${m ? 'Mettre à jour' : 'Enregistrer'}</button>
+              ${m ? '<button class="btn btn-danger" onclick="deleteMembre('+m.id+')"><i class="fas fa-trash"></i> Supprimer</button>' : ''}
+              <button class="btn btn-ghost" onclick="selectedMembre=null;buildSaisie(document.getElementById(\'page-saisie\'))"><i class="fas fa-broom"></i> Réinitialiser</button>
+            </div></div></div>`;
+        }
+
+        function saveMembre() {
+            const nom = document.getElementById('sf-nom').value.trim();
+            const genre = document.getElementById('sf-genre').value;
+            const ministere = document.getElementById('sf-ministere').value;
+            if (!nom) { showNotification('Le nom est obligatoire', 'error'); return; }
+            if (!genre) { showNotification('Veuillez sélectionner le genre', 'error'); return; }
+            const obj = {
+                id: selectedMembre ? selectedMembre.id : getNextId(DB.membres),
+                nom,
+                prenoms: document.getElementById('sf-prenoms').value || '',
+                contact: document.getElementById('sf-contact').value || '',
+                quartier: document.getElementById('sf-quartier').value || '',
+                profession: document.getElementById('sf-profession').value || '',
+                genre,
+                dateBapteme: document.getElementById('sf-bapteme').value || '',
+                ministere,
+                egliseMaison: document.getElementById('sf-db').value || '',
+                nomDirigeant: document.getElementById('sf-dirigeantdb').value || '',
+                formateur: document.getElementById('sf-formateur').value || '',
+                statut: document.getElementById('sf-statut').value || 'Actif',
+                ville: myVille() || document.getElementById('sf-ville').value.trim() || ''
+            };
+            if (selectedMembre) { const idx = DB.membres.findIndex(x => x.id === selectedMembre.id); if (idx >= 0) DB
+                    .membres[idx] = obj; } else DB.membres.push(obj);
+            const isEdit = !!selectedMembre;
+            selectedMembre = null;
+            saveData();
+            showNotification(isEdit ? 'Membre mis à jour ✓' : 'Membre ajouté ✓');
+            setTimeout(() => navigateTo('membres'), 500);
+        }
+
+        function voirMembre(id) {
+            const m = DB.membres.find(x => x.id === id);
+            if (!m || !inScope(m)) return;
+            const body =
+                `<div class="g2" style="margin-bottom:14px"><div><div class="fld-lbl">Nom & Prénoms</div><div style="font-weight:700;font-size:14px">${m.nom} ${m.prenoms}</div></div><div><div class="fld-lbl">Genre & Ministère</div><div>${genreBadge(m.genre)} ${ministereBadge(m.ministere)}</div></div><div><div class="fld-lbl">Contact</div><div>${m.contact || '—'}</div></div><div><div class="fld-lbl">Quartier</div><div>${m.quartier || '—'}</div></div><div><div class="fld-lbl">Profession</div><div>${m.profession || '—'}</div></div><div><div class="fld-lbl">Date de Baptême</div><div>${formatDate(m.dateBapteme)}</div></div><div><div class="fld-lbl">Église de Maison (DB)</div><div>${m.egliseMaison || '—'}</div></div><div><div class="fld-lbl">Ville</div><div>${m.ville || '—'}</div></div><div><div class="fld-lbl">Nom du Dirigeant</div><div>${m.nomDirigeant || '—'}</div></div><div><div class="fld-lbl">Formateur/Trice</div><div>${m.formateur || '—'}</div></div><div><div class="fld-lbl">Statut</div><div>${statutBadge(m.statut)}</div></div></div>`;
+            const footer =
+                `<button class="btn btn-ghost" onclick="closeModal()">Fermer</button><button class="btn btn-primary" onclick="closeModal();editMembre(${id})"><i class="fas fa-edit"></i>Modifier</button>`;
+            openModal('✝ Fiche de ' + m.nom + ' ' + m.prenoms, body, footer);
+        }
+
+        function editMembre(id) { selectedMembre = DB.membres.find(x => x.id === id) || null;
+            if (!inScope(selectedMembre)) selectedMembre = null;
+            navigateTo('saisie'); }
+
+        function deleteMembre(id) { const m = DB.membres.find(x => x.id === id); if (!m || !inScope(m) || !confirm('Supprimer ' + m.nom +
+                ' ' + m.prenoms + ' ?')) return; DB.membres = DB.membres.filter(x => x.id !== id); saveData();
+            showNotification('Membre supprimé', 'error');
+            buildMembres(document.getElementById('page-membres')); }
+
+        // ============================================================
+        // PAGE MOUVEMENTS
+        // ============================================================
+        let mouvPage = 1;
+        const MOUV_PER_PAGE = 10;
+
+        function getCitiesList() {
+            if (myVille()) return [myVille()];
+            const villes = new Set(Object.keys(DB.codes.villes));
+            Object.keys(DB.statsM).forEach(key => {
+                const parts = key.split('-');
+                if (parts.length >= 3) villes.add(parts.slice(2).join('-'));
+            });
+            DB.membres.forEach(m => { if (m.ville) villes.add(m.ville); });
+            DB.mouvements.forEach(m => { if (m.ville) villes.add(m.ville); });
+            return Array.from(villes).sort((a, b) => a.localeCompare(b, 'fr'));
+        }
+
+        function buildMouvements(container) {
+            const villes = getCitiesList();
+            let villeOptions = myVille() ? '' : '<option value="Toutes">Toutes</option>';
+            villes.forEach(v => { villeOptions += '<option value="' + v + '">' + v + '</option>'; });
+
+            const statsTypes = MOUV_TYPES.map(t => {
+                const n = scopeMouvements().filter(m => m.type === t).length;
+                const color = t === 'Arrivée' || t === 'Baptême' || t === 'Restauration' ? 'var(--green)' : t ===
+                    'Départ' || t === 'Décès' ? 'var(--red)' : 'var(--yellow)';
+                return '<div class="stat"><div class="stat-ico" style="background:' + (MOUV_BG[t] || 'var(--bg3)') +
+                    ';color:' + color + '"><i class="fas fa-' + (MOUV_ICONS[t] || 'circle') +
+                    '"></i></div><div><div class="stat-val">' + n + '</div><div class="stat-lbl">' + t +
+                    '</div></div></div>';
+            }).join('');
+
+            container.innerHTML =
+                `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+              <div style="font-size:15px;font-weight:700">Récapitulatif des mouvements</div>
+              <div class="fbar" style="padding:8px 12px;margin:0;">
+                <label style="font-size:11px;font-weight:600;color:var(--text2);">Filtrer par ville :</label>
+                <select id="mouv-filtre-ville" onchange="mouvPage=1;renderMouvementsTable()" style="width:auto;min-width:120px;">${villeOptions}</select>
+              </div>
+            </div>
+            <div class="g4" style="margin-bottom:16px">${statsTypes}</div>
+
+            <div class="card" style="border:1px solid var(--accentbg)">
+              <div class="card-head"><span class="card-title" style="color:var(--accent2)"><i class="fas fa-plus-circle"></i> Ajouter un mouvement</span></div>
+              <div class="card-body">
+                <div class="g2">
+                  <div class="fld"><label class="fld-lbl">Type *</label><select id="mf-type" onchange="toggleMouvFields()"><option value="">— Sélectionner —</option>${MOUV_TYPES.map(t => '<option>'+t+'</option>').join('')}</select></div>
+                  <div class="fld"><label class="fld-lbl">Date</label><input type="date" id="mf-date" value="${new Date().toISOString().split('T')[0]}"></div>
+                </div>
+                <div class="g2">
+                  <div class="fld"><label class="fld-lbl">Genre</label><select id="mf-genre"><option value="H">Frère (H)</option><option value="F">Sœur (F)</option></select></div>
+                  <div class="fld"><label class="fld-lbl">Nom *</label><input id="mf-nom" placeholder="Nom"></div>
+                </div>
+                <div class="g2">
+                  <div class="fld"><label class="fld-lbl">Prénom(s)</label><input id="mf-prenom" placeholder="Prénom(s)"></div>
+                  <div class="fld"><label class="fld-lbl">Ville</label><input id="mf-ville" value="${esc(myVille() || '')}" placeholder="Ex: Man" list="ville-mouv-list" ${myVille() ? 'disabled' : ''}><datalist id="ville-mouv-list">${villes.map(v => '<option value="'+v+'">').join('')}</datalist></div>
+                </div>
+                <div class="g2">
+                  <div class="fld"><label class="fld-lbl" id="mf-detail-lbl">Détail (provenance / destination)</label><input id="mf-detail" placeholder="Ex: Venu de Daloa / Parti à Abidjan"></div>
+                </div>
+                <div class="btn-group" style="justify-content:flex-end"><button class="btn btn-primary" onclick="saveMouvementFromForm()"><i class="fas fa-save"></i>Enregistrer</button></div>
+              </div>
+            </div>
+
+            <div class="card"><div class="card-head"><span class="card-title">Historique détaillé</span></div>
+              <div class="card-body" style="padding:0;overflow-x:auto">
+                <table class="dtable"><thead><tr><th>N°</th><th>Date</th><th>Type</th><th>Nom</th><th>Prénom</th><th>Genre</th><th>Détail</th><th>Ville</th><th>Actions</th></tr></thead>
+                <tbody id="tbody-mouvements"></tbody></table>
+                <div id="mouv-pagination" class="pagination"></div>
+              </div>
+            </div>`;
+            renderMouvementsTable();
+        }
+
+        function renderMouvementsTable() {
+            const villeFiltre = document.getElementById('mouv-filtre-ville')?.value || 'Toutes';
+            let data = scopeMouvements().slice();
+            if (villeFiltre !== 'Toutes') {
+                data = data.filter(m => m.ville === villeFiltre);
+            }
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const total = data.length;
+            const totalPages = Math.ceil(total / MOUV_PER_PAGE);
+            if (mouvPage > totalPages) mouvPage = totalPages || 1;
+            const start = (mouvPage - 1) * MOUV_PER_PAGE;
+            const end = Math.min(start + MOUV_PER_PAGE, total);
+            const pageData = data.slice(start, end);
+
+            const tbody = document.getElementById('tbody-mouvements');
+            if (!tbody) return;
+            if (pageData.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="9"><div class="empty"><i class="fas fa-arrows-alt-h"></i>Aucun mouvement</div></td></tr>'; } else {
+                tbody.innerHTML = pageData.map(m =>
+                    `<tr>
+                <td style="color:var(--text3);font-size:11px">${m.id}</td>
+                <td>${formatDate(m.date)}</td>
+                <td><span class="badge ${MOUV_COLORS[m.type] || 'b-gray'}">${m.type}</span></td>
+                <td style="font-weight:700">${m.nom}</td>
+                <td>${m.prenom || '—'}</td>
+                <td>${genreBadge(m.genre)}</td>
+                <td style="font-size:11.5px;color:var(--text2)">${m.detail || '—'}</td>
+                <td style="font-size:11.5px">${m.ville || '—'}</td>
+                <td><div class="btn-group">
+                  <button class="btn btn-ghost btn-sm" style="padding:3px 6px" onclick="editMouvement(${m.id})"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-danger btn-sm" style="padding:3px 6px" onclick="deleteMouvement(${m.id})"><i class="fas fa-trash"></i></button>
+                </div></td>
+              </tr>`
+                ).join('');
+            }
+
+            const pagination = document.getElementById('mouv-pagination');
+            if (pagination) {
+                let html = '';
+                if (totalPages > 1) {
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="mouvPage=1;renderMouvementsTable()" ${mouvPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="mouvPage=${Math.max(1, mouvPage - 1)};renderMouvementsTable()" ${mouvPage === 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
+                    html +=
+                        `<span style="margin:0 8px;font-size:12px;color:var(--text2)">${mouvPage} / ${totalPages}</span>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="mouvPage=${Math.min(totalPages, mouvPage + 1)};renderMouvementsTable()" ${mouvPage === totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+                    html +=
+                        `<button class="btn btn-sm btn-ghost" onclick="mouvPage=${totalPages};renderMouvementsTable()" ${mouvPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
+                }
+                pagination.innerHTML = html;
+            }
+        }
+
+        function editMouvement(id) {
+            const m = DB.mouvements.find(x => x.id === id);
+            if (!m || !inScope(m)) return;
+            const body = `
+            <div class="g2">
+              <div class="fld"><label class="fld-lbl">Type</label><select id="edit-mf-type">${MOUV_TYPES.map(t => `<option value="${t}" ${t === m.type ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+              <div class="fld"><label class="fld-lbl">Date</label><input type="date" id="edit-mf-date" value="${m.date}"></div>
+            </div>
+            <div class="g2">
+              <div class="fld"><label class="fld-lbl">Genre</label><select id="edit-mf-genre"><option value="H" ${m.genre === 'H' ? 'selected' : ''}>Frère (H)</option><option value="F" ${m.genre === 'F' ? 'selected' : ''}>Sœur (F)</option></select></div>
+              <div class="fld"><label class="fld-lbl">Nom</label><input id="edit-mf-nom" value="${m.nom}"></div>
+            </div>
+            <div class="g2">
+              <div class="fld"><label class="fld-lbl">Prénom</label><input id="edit-mf-prenom" value="${m.prenom || ''}"></div>
+              <div class="fld"><label class="fld-lbl">Ville</label><input id="edit-mf-ville" value="${m.ville || ''}" ${myVille() ? 'disabled' : ''}></div>
+            </div>
+            <div class="fld"><label class="fld-lbl">Détail</label><input id="edit-mf-detail" value="${m.detail || ''}"></div>
+          `;
+            const footer =
+                `<button class="btn btn-ghost" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="saveEditMouvement(${id})"><i class="fas fa-save"></i> Mettre à jour</button>`;
+            openModal('✏️ Modifier le mouvement', body, footer);
+        }
+
+        function saveEditMouvement(id) {
+            const idx = DB.mouvements.findIndex(x => x.id === id);
+            if (idx === -1 || !inScope(DB.mouvements[idx])) return;
+            const type = document.getElementById('edit-mf-type').value;
+            const date = document.getElementById('edit-mf-date').value;
+            const genre = document.getElementById('edit-mf-genre').value;
+            const nom = document.getElementById('edit-mf-nom').value.trim();
+            if (!nom) { showNotification('Le nom est obligatoire', 'error'); return; }
+            DB.mouvements[idx] = {
+                id: id,
+                type,
+                date,
+                genre,
+                nom,
+                prenom: document.getElementById('edit-mf-prenom').value.trim(),
+                ville: myVille() || document.getElementById('edit-mf-ville').value.trim(),
+                detail: document.getElementById('edit-mf-detail').value.trim()
+            };
+            saveData();
+            closeModal();
+            showNotification('Mouvement mis à jour ✓');
+            renderMouvementsTable();
+            updateBadges();
+        }
+
+        function toggleMouvFields() {
+            const t = document.getElementById('mf-type')?.value || '';
+            const lbl = document.getElementById('mf-detail-lbl');
+            if (!lbl) return;
+            if (t === 'Arrivée') lbl.textContent = 'Provenance (ville / église)';
+            else if (t === 'Départ') lbl.textContent = 'Destination (ville / église)';
+            else if (t === 'Baptême') lbl.textContent = 'Date de baptême (ou notes)';
+            else lbl.textContent = 'Détail / Notes';
+        }
+
+        function saveMouvementFromForm() {
+            const type = document.getElementById('mf-type')?.value || '';
+            const nom = document.getElementById('mf-nom')?.value.trim() || '';
+            if (!type || !nom) { showNotification('Type et Nom obligatoires', 'error'); return; }
+            DB.mouvements.push({
+                id: getNextId(DB.mouvements),
+                date: document.getElementById('mf-date')?.value || '',
+                type,
+                nom,
+                prenom: document.getElementById('mf-prenom')?.value || '',
+                genre: document.getElementById('mf-genre')?.value || 'H',
+                detail: document.getElementById('mf-detail')?.value || '',
+                ville: myVille() || document.getElementById('mf-ville')?.value.trim() || ''
+            });
+            saveData();
+            showNotification('Mouvement enregistré ✓');
+            mouvPage = 1;
+            renderMouvementsTable();
+            updateBadges();
+        }
+
+        function deleteMouvement(id) { if (!inScope(DB.mouvements.find(x => x.id === id)) || !confirm('Supprimer ce mouvement ?')) return; DB.mouvements = DB.mouvements.filter(
+                x => x.id !== id); saveData(); showNotification('Supprimé', 'error');
+            renderMouvementsTable();
+            updateBadges(); }
+
+        // ============================================================
+        // PAGE STATS
+        // ============================================================
+        function buildStats(container) {
+            const yearSel = new Date().getFullYear();
+            let yearOptions = '';
+            for (let y = 2024; y <= 2027; y++) yearOptions += '<option value="' + y + '"' + (y === yearSel ? ' selected' :
+                '') + '>' + y + '</option>';
+
+            const villes = getCitiesList();
+            let villeOptions = myVille() ? '' : '<option value="Toutes">Toutes</option>';
+            villes.forEach(v => { villeOptions += '<option value="' + v + '">' + v + '</option>'; });
+
+            let mouvementsHtml = '';
+            STATS_TYPES.forEach(st => {
+                mouvementsHtml += `
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <label style="min-width:110px;font-size:11px;font-weight:600;color:var(--text2)">${st.label}</label>
+                <div style="flex:1"><input type="number" id="ss-${st.key}H" min="0" placeholder="Frères" style="font-size:11px"></div>
+                <div style="flex:1"><input type="number" id="ss-${st.key}F" min="0" placeholder="Sœurs" style="font-size:11px"></div>
+              </div>
+            `;
+            });
+
+            container.innerHTML =
+                `<div class="card"><div class="card-head"><span class="card-title"><i class="fas fa-chart-bar" style="color:var(--accent2);margin-right:6px"></i>Fiche mensuelle des statistiques</span>
+              <select id="stats-year" style="width:auto" onchange="renderStatsTable()">${yearOptions}</select>
+              <select id="stats-city" style="width:auto" onchange="renderStatsTable()">${villeOptions}</select>
+              <button class="btn btn-primary btn-sm" onclick="openSaisieStats()"><i class="fas fa-edit"></i>Saisir les stats</button>
+            </div><div class="card-body" id="stats-body" style="padding:0;overflow-x:auto"></div></div>
+
+            <div class="card" style="border:1px solid var(--accentbg)"><div class="card-head"><span class="card-title" style="color:var(--accent2)"><i class="fas fa-pen"></i> Saisie rapide — statistiques mensuelles</span></div><div class="card-body">
+              <div class="g2">
+                <div class="fld"><label class="fld-lbl">Année</label><input id="ss-year" value="${yearSel}" style="max-width:100px"></div>
+                <div class="fld"><label class="fld-lbl">Mois</label><select id="ss-mois">${MOIS_NOMS.map((m,i) => '<option value="'+String(i+1).padStart(2,'0')+'">'+m+'</option>').join('')}</select></div>
+              </div>
+              <div class="fld"><label class="fld-lbl">Ville</label><select id="ss-ville-select">${villeOptions.replace('<option value="Toutes">Toutes</option>', '')}</select></div>
+              <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px">Effectif début de mois</div>
+              <div class="g2"><div class="fld"><label class="fld-lbl">Frères</label><input type="number" id="ss-effH" min="0" placeholder="0"></div><div class="fld"><label class="fld-lbl">Sœurs</label><input type="number" id="ss-effF" min="0" placeholder="0"></div></div>
+              <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:10px 0;border-bottom:1px solid var(--border);padding-bottom:8px">Mouvements du mois</div>
+              ${mouvementsHtml}
+              <div class="fld" style="margin-top:10px"><label class="fld-lbl">Assistance Moyenne</label><input type="number" id="ss-assist" min="0" placeholder="0"></div>
+              <div class="btn-group" style="justify-content:flex-end"><button class="btn btn-primary" onclick="saveStatsDirect()"><i class="fas fa-save"></i>Enregistrer les stats</button></div>
+            </div></div>
+
+            <div class="g2" style="margin-top:16px"><div class="card"><div class="card-head"><span class="card-title">Évolution effectif</span></div><div class="card-body" style="height:220px"><canvas id="chart-stats-evo"></canvas></div></div>
+              <div class="card"><div class="card-head"><span class="card-title">Mouvements par mois</span></div><div class="card-body" style="height:220px"><canvas id="chart-stats-mouv"></canvas></div></div></div>`;
+
+            renderStatsTable();
+        }
+
+        function saveStatsDirect() {
+            const y = document.getElementById('ss-year')?.value || '2025';
+            const m = document.getElementById('ss-mois')?.value || '01';
+            const ville = myVille() || document.getElementById('ss-ville-select')?.value || 'Man';
+            const key = y + '-' + m + '-' + ville;
+
+            function getVal(id) {
+                const el = document.getElementById(id);
+                if (!el) return 0;
+                const v = parseInt(el.value);
+                return isNaN(v) ? 0 : v;
+            }
+
+            const effH = getVal('ss-effH');
+            const effF = getVal('ss-effF');
+
+            const mov = {};
+            STATS_TYPES.forEach(st => {
+                mov[st.key + 'H'] = getVal('ss-' + st.key + 'H');
+                mov[st.key + 'F'] = getVal('ss-' + st.key + 'F');
+            });
+
+            const baptH = mov.baptH,
+                baptF = mov.baptF;
+            const restH = mov.restH,
+                restF = mov.restF;
+            const arrH = mov.arrH,
+                arrF = mov.arrF;
+            const depH = mov.depH,
+                depF = mov.depF;
+            const retroH = mov.retroH,
+                retroF = mov.retroF;
+            const decH = mov.decH,
+                decF = mov.decF;
+            const assistMoy = getVal('ss-assist');
+
+            const finH = effH + baptH + restH + arrH - depH - retroH - decH;
+            const finF = effF + baptF + restF + arrF - depF - retroF - decF;
+
+            DB.statsM[key] = {
+                effH, effF,
+                baptH, baptF,
+                restH, restF,
+                arrH, arrF,
+                depH, depF,
+                retroH, retroF,
+                decH, decF,
+                assistMoy
+            };
+
+            const nextMonth = new Date(parseInt(y), parseInt(m) - 1 + 1, 1);
+            const nextKey = nextMonth.getFullYear() + '-' + String(nextMonth.getMonth() + 1).padStart(2, '0') + '-' +
+            ville;
+            if (!DB.statsM[nextKey]) {
+                DB.statsM[nextKey] = { effH: finH, effF: finF, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                    depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 };
+            } else {
+                DB.statsM[nextKey].effH = finH;
+                DB.statsM[nextKey].effF = finF;
+            }
+
+            const moisNom = MOIS_NOMS[parseInt(m) - 1];
+            const dateStr = y + '-' + m + '-01';
+
+            const typesMouv = [
+                { type: 'Baptême', H: baptH, F: baptF, nomH: 'Nouveau baptisé', nomF: 'Nouvelle baptisée' },
+                { type: 'Restauration', H: restH, F: restF, nomH: 'Restauré', nomF: 'Restaurée' },
+                { type: 'Arrivée', H: arrH, F: arrF, nomH: 'Nouvel arrivant', nomF: 'Nouvelle arrivante' },
+                { type: 'Départ', H: depH, F: depF, nomH: 'Départ', nomF: 'Départ' },
+                { type: 'Rétrogradé', H: retroH, F: retroF, nomH: 'Rétrogradé', nomF: 'Rétrogradée' },
+                { type: 'Décès', H: decH, F: decF, nomH: 'Décédé', nomF: 'Décédée' }
+            ];
+
+            typesMouv.forEach(t => {
+                if (t.H > 0) {
+                    for (let i = 0; i < t.H; i++) {
+                        DB.mouvements.push({
+                            id: getNextId(DB.mouvements),
+                            date: dateStr,
+                            type: t.type,
+                            nom: t.nomH,
+                            prenom: '(Frère ' + (i + 1) + ')',
+                            genre: 'H',
+                            detail: t.type + ' - ' + moisNom + ' ' + y + ' (' + ville + ')',
+                            ville: ville
+                        });
+                    }
+                }
+                if (t.F > 0) {
+                    for (let i = 0; i < t.F; i++) {
+                        DB.mouvements.push({
+                            id: getNextId(DB.mouvements),
+                            date: dateStr,
+                            type: t.type,
+                            nom: t.nomF,
+                            prenom: '(Sœur ' + (i + 1) + ')',
+                            genre: 'F',
+                            detail: t.type + ' - ' + moisNom + ' ' + y + ' (' + ville + ')',
+                            ville: ville
+                        });
+                    }
+                }
+            });
+
+            saveData();
+            showNotification('✓ Stats enregistrées pour ' + ville + ' - Effectif fin: ' + finH + ' Frères, ' + finF +
+                ' Sœurs', 'success');
+            renderStatsTable();
+            updateBadges();
+            if (currentPage === 'mouvements') buildMouvements(document.getElementById('page-mouvements'));
+        }
+
+        function renderStatsTable() {
+            const year = document.getElementById('stats-year')?.value || '2025';
+            const selectedCity = document.getElementById('stats-city')?.value || 'Toutes';
+
+            const sections = [
+                ['Effectif début', 'eff'],
+                ['Baptême', 'bapt'],
+                ['Restauration', 'rest'],
+                ['Arrivées', 'arr'],
+                ['Départs', 'dep'],
+                ['Rétrogradés', 'retro'],
+                ['Décès', 'dec'],
+                ['Effectif fin (calc.)', 'fin'],
+                ['Croissance', 'crois']
+            ];
+
+            let thead =
+                `<table class="dtable" style="min-width:1000px"><thead><tr style="background:rgba(124,58,237,.15)"><th style="width:130px">Mois</th>${sections.map(s => '<th colspan="3" style="text-align:center;border-left:1px solid rgba(255,255,255,.1)">'+s[0]+'</th>').join('')}<th>Assis.</th></tr><tr><th></th>${sections.map(() => '<th>F</th><th>S</th><th>Tot</th>').join('')}<th></th></tr></thead><tbody>`;
+            let rows = '';
+
+            MOIS_NOMS.forEach((mois, i) => {
+                const monthKey = year + '-' + String(i + 1).padStart(2, '0');
+                let s = null;
+                if (selectedCity === 'Toutes') {
+                    s = { effH: 0, effF: 0, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0, depH: 0,
+                        depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 };
+                    Object.keys(DB.statsM).forEach(key => {
+                        if (key.startsWith(monthKey + '-')) {
+                            const data = DB.statsM[key];
+                            for (let field in s) {
+                                if (field !== 'assistMoy') s[field] += data[field] || 0;
+                            }
+                            s.assistMoy += data.assistMoy || 0;
+                        }
+                    });
+                    const count = Object.keys(DB.statsM).filter(k => k.startsWith(monthKey + '-')).length;
+                    if (count > 0) s.assistMoy = Math.round(s.assistMoy / count);
+                } else {
+                    const key = monthKey + '-' + selectedCity;
+                    s = DB.statsM[key] || {};
+                }
+
+                const hasData = Object.keys(s).length > 0 && (s.effH || s.effF);
+
+                function getVals(sk) {
+                    if (sk === 'eff') return [s.effH || 0, s.effF || 0];
+                    if (sk === 'bapt') return [s.baptH || 0, s.baptF || 0];
+                    if (sk === 'rest') return [s.restH || 0, s.restF || 0];
+                    if (sk === 'arr') return [s.arrH || 0, s.arrF || 0];
+                    if (sk === 'dep') return [s.depH || 0, s.depF || 0];
+                    if (sk === 'retro') return [s.retroH || 0, s.retroF || 0];
+                    if (sk === 'dec') return [s.decH || 0, s.decF || 0];
+                    if (sk === 'fin') {
+                        const effH = s.effH || 0;
+                        const effF = s.effF || 0;
+                        const finH = effH + (s.baptH || 0) + (s.restH || 0) + (s.arrH || 0) - (s.depH || 0) - (s
+                            .retroH || 0) - (s.decH || 0);
+                        const finF = effF + (s.baptF || 0) + (s.restF || 0) + (s.arrF || 0) - (s.depF || 0) - (s
+                            .retroF || 0) - (s.decF || 0);
+                        return [finH, finF];
+                    }
+                    if (sk === 'crois') {
+                        const effH = s.effH || 0;
+                        const effF = s.effF || 0;
+                        const finH = effH + (s.baptH || 0) + (s.restH || 0) + (s.arrH || 0) - (s.depH || 0) - (s
+                            .retroH || 0) - (s.decH || 0);
+                        const finF = effF + (s.baptF || 0) + (s.restF || 0) + (s.arrF || 0) - (s.depF || 0) - (s
+                            .retroF || 0) - (s.decF || 0);
+                        return [finH - effH, finF - effF];
+                    }
+                    return [0, 0];
+                }
+
+                rows += '<tr' + (hasData ? ' style="background:rgba(124,58,237,.05)"' : '') + '><td style="font-weight:600;white-space:nowrap">' +
+                    mois + ' <span style="font-size:10px;color:var(--text3)">' + year + '</span></td>' +
+                    sections.map(sec => { const sk = sec[1]; const vals = getVals(sk); const h = vals[0],
+                            f = vals[1]; const t = h + f; let col = ''; if (sk === 'crois') { col = t > 0 ?
+                                'var(--green)' : t < 0 ? 'var(--red)' : 'var(--text3)'; } const style = col ?
+                            'color:' + col + ';font-weight:700' : ''; return '<td style="text-align:center;' +
+                            style + '">' + (h || '—') + '</td><td style="text-align:center;' + style + '">' + (
+                            f || '—') + '</td><td style="text-align:center;font-weight:600;' + (col ? 'color:' +
+                            col : '') + '">' + (t || '—') + '</td>'; }).join('') +
+                    '<td style="text-align:center">' + (s.assistMoy || '—') + '</td></tr>';
+            });
+
+            const totalRows = sections.map(sec => {
+                const sk = sec[1];
+                let totH = 0,
+                    totF = 0;
+                if (selectedCity === 'Toutes') {
+                    Object.keys(DB.statsM).forEach(key => {
+                        if (key.startsWith(year)) {
+                            const data = DB.statsM[key];
+                            if (sk === 'eff' || sk === 'fin' || sk === 'crois') return;
+                            totH += data[sk + 'H'] || 0;
+                            totF += data[sk + 'F'] || 0;
+                        }
+                    });
+                } else {
+                    for (let i = 1; i <= 12; i++) {
+                        const key = year + '-' + String(i).padStart(2, '0') + '-' + selectedCity;
+                        const data = DB.statsM[key] || {};
+                        if (sk === 'eff' || sk === 'fin' || sk === 'crois') return '<td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">—</td>';
+                        totH += data[sk + 'H'] || 0;
+                        totF += data[sk + 'F'] || 0;
+                    }
+                }
+                if (sk === 'eff' || sk === 'fin' || sk === 'crois') return '<td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center">—</td>';
+                return '<td style="text-align:center">' + totH + '</td><td style="text-align:center">' + totF +
+                    '</td><td style="text-align:center">' + (totH + totF) + '</td>';
+            }).join('');
+
+            rows +=
+                '<tr style="background:rgba(124,58,237,.18);font-weight:700"><td>TOTAL</td>' + totalRows +
+                '<td></td></tr>';
+            document.getElementById('stats-body').innerHTML = thead + rows + '</tbody></table>';
+
+            setTimeout(() => {
+                const year2 = document.getElementById('stats-year')?.value || '2025';
+                const labels = MOIS_NOMS.map(m => m.slice(0, 3));
+                let effData = [],
+                    arrData = [],
+                    depData = [];
+                const city = document.getElementById('stats-city')?.value || 'Toutes';
+
+                if (city === 'Toutes') {
+                    for (let i = 0; i < 12; i++) {
+                        const m = String(i + 1).padStart(2, '0');
+                        let eff = 0,
+                            arr = 0,
+                            dep = 0;
+                        Object.keys(DB.statsM).forEach(key => {
+                            if (key.startsWith(year2 + '-' + m + '-')) {
+                                const data = DB.statsM[key];
+                                eff += (data.effH || 0) + (data.effF || 0);
+                                arr += (data.arrH || 0) + (data.arrF || 0);
+                                dep += (data.depH || 0) + (data.depF || 0);
+                            }
+                        });
+                        effData.push(eff);
+                        arrData.push(arr);
+                        depData.push(dep);
+                    }
+                } else {
+                    for (let i = 0; i < 12; i++) {
+                        const m = String(i + 1).padStart(2, '0');
+                        const key = year2 + '-' + m + '-' + city;
+                        const data = DB.statsM[key] || {};
+                        effData.push((data.effH || 0) + (data.effF || 0));
+                        arrData.push((data.arrH || 0) + (data.arrF || 0));
+                        depData.push((data.depH || 0) + (data.depF || 0));
+                    }
+                }
+
+                const ctx1 = document.getElementById('chart-stats-evo');
+                if (ctx1) { if (chartInstances['cs-evo']) chartInstances['cs-evo'].destroy();
+                    chartInstances['cs-evo'] = new Chart(ctx1, { type: 'line', data: { labels, datasets: [{ label: 'Effectif',
+                                data: effData, borderColor: '#818CF8', backgroundColor: 'rgba(99,102,241,.12)',
+                                fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#818CF8' }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: 'rgba(148,163,184,1)',
+                                        font: { size: 11 } } } }, scales: { x: { grid: { display: false },
+                                    ticks: { color: 'rgba(100,116,139,1)' } }, y: { grid: { color: 'rgba(255,255,255,.05)' },
+                                    ticks: { precision: 0, color: 'rgba(100,116,139,1)' } } } } }); }
+                const ctx2 = document.getElementById('chart-stats-mouv');
+                if (ctx2) { if (chartInstances['cs-mouv']) chartInstances['cs-mouv'].destroy();
+                    chartInstances['cs-mouv'] = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ label: 'Arrivées',
+                                data: arrData, backgroundColor: 'rgba(16,185,129,.65)', borderRadius: 5 },
+                            { label: 'Départs', data: depData, backgroundColor: 'rgba(239,68,68,.65)',
+                                borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { labels: { color: 'rgba(148,163,184,1)', font: { size: 11 } } } },
+                            scales: { x: { grid: { display: false }, ticks: { color: 'rgba(100,116,139,1)' } },
+                                y: { grid: { color: 'rgba(255,255,255,.05)' }, beginAtZero: true,
+                                    ticks: { precision: 0, color: 'rgba(100,116,139,1)' } } } } }); }
+            }, 100);
+        }
+
+        function openSaisieStats() {
+            const y = document.getElementById('stats-year')?.value || '2025';
+            const villes = getCitiesList();
+            let villeOptions = '';
+            villes.forEach(v => { villeOptions += '<option value="' + v + '">' + v + '</option>'; });
+
+            let mouvementsHtml = '';
+            STATS_TYPES.forEach(st => {
+                mouvementsHtml += `
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <label style="min-width:110px;font-size:11px;font-weight:600;color:var(--text2)">${st.label}</label>
+                <div style="flex:1"><input type="number" id="ss-${st.key}H-modal" min="0" placeholder="Frères" style="font-size:11px"></div>
+                <div style="flex:1"><input type="number" id="ss-${st.key}F-modal" min="0" placeholder="Sœurs" style="font-size:11px"></div>
+              </div>
+            `;
+            });
+
+            const body =
+                `<div class="g2"><div class="fld"><label class="fld-lbl">Année</label><input id="ss-year-modal" value="${y}" style="max-width:90px"></div><div class="fld"><label class="fld-lbl">Mois</label><select id="ss-mois-modal">${MOIS_NOMS.map((m,i) => '<option value="'+String(i+1).padStart(2,'0')+'">'+m+'</option>').join('')}</select></div></div>
+            <div class="fld"><label class="fld-lbl">Ville</label><select id="ss-ville-modal">${villeOptions}</select></div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px">Effectif début</div><div class="g2"><div class="fld"><label class="fld-lbl">Frères</label><input type="number" id="ss-effH-modal" min="0"></div><div class="fld"><label class="fld-lbl">Sœurs</label><input type="number" id="ss-effF-modal" min="0"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:10px 0;border-bottom:1px solid var(--border);padding-bottom:8px">Mouvements</div>
+            ${mouvementsHtml}
+            <div class="fld"><label class="fld-lbl">Assistance Moyenne</label><input type="number" id="ss-assist-modal" min="0"></div>`;
+            const footer =
+                `<button class="btn btn-ghost" onclick="closeModal()">Annuler</button><button class="btn btn-primary" onclick="saveStatsModal()"><i class="fas fa-save"></i>Enregistrer</button>`;
+            openModal('📊 Saisir les statistiques mensuelles', body, footer);
+        }
+
+        function saveStatsModal() {
+            const y = document.getElementById('ss-year-modal')?.value || '2025';
+            const m = document.getElementById('ss-mois-modal')?.value || '01';
+            const ville = myVille() || document.getElementById('ss-ville-modal')?.value || 'Man';
+            const key = y + '-' + m + '-' + ville;
+
+            function getVal(id) {
+                const el = document.getElementById(id);
+                if (!el) return 0;
+                const v = parseInt(el.value);
+                return isNaN(v) ? 0 : v;
+            }
+
+            const effH = getVal('ss-effH-modal');
+            const effF = getVal('ss-effF-modal');
+
+            const mov = {};
+            STATS_TYPES.forEach(st => {
+                mov[st.key + 'H'] = getVal('ss-' + st.key + 'H-modal');
+                mov[st.key + 'F'] = getVal('ss-' + st.key + 'F-modal');
+            });
+
+            const baptH = mov.baptH,
+                baptF = mov.baptF;
+            const restH = mov.restH,
+                restF = mov.restF;
+            const arrH = mov.arrH,
+                arrF = mov.arrF;
+            const depH = mov.depH,
+                depF = mov.depF;
+            const retroH = mov.retroH,
+                retroF = mov.retroF;
+            const decH = mov.decH,
+                decF = mov.decF;
+            const assistMoy = getVal('ss-assist-modal');
+
+            const finH = effH + baptH + restH + arrH - depH - retroH - decH;
+            const finF = effF + baptF + restF + arrF - depF - retroF - decF;
+
+            DB.statsM[key] = {
+                effH, effF,
+                baptH, baptF,
+                restH, restF,
+                arrH, arrF,
+                depH, depF,
+                retroH, retroF,
+                decH, decF,
+                assistMoy
+            };
+
+            const nextMonth = new Date(parseInt(y), parseInt(m) - 1 + 1, 1);
+            const nextKey = nextMonth.getFullYear() + '-' + String(nextMonth.getMonth() + 1).padStart(2, '0') + '-' +
+            ville;
+            if (!DB.statsM[nextKey]) {
+                DB.statsM[nextKey] = { effH: finH, effF: finF, baptH: 0, baptF: 0, restH: 0, restF: 0, arrH: 0, arrF: 0,
+                    depH: 0, depF: 0, retroH: 0, retroF: 0, decH: 0, decF: 0, assistMoy: 0 };
+            } else {
+                DB.statsM[nextKey].effH = finH;
+                DB.statsM[nextKey].effF = finF;
+            }
+
+            const moisNom = MOIS_NOMS[parseInt(m) - 1];
+            const dateStr = y + '-' + m + '-01';
+
+            const typesMouv = [
+                { type: 'Baptême', H: baptH, F: baptF, nomH: 'Nouveau baptisé', nomF: 'Nouvelle baptisée' },
+                { type: 'Restauration', H: restH, F: restF, nomH: 'Restauré', nomF: 'Restaurée' },
+                { type: 'Arrivée', H: arrH, F: arrF, nomH: 'Nouvel arrivant', nomF: 'Nouvelle arrivante' },
+                { type: 'Départ', H: depH, F: depF, nomH: 'Départ', nomF: 'Départ' },
+                { type: 'Rétrogradé', H: retroH, F: retroF, nomH: 'Rétrogradé', nomF: 'Rétrogradée' },
+                { type: 'Décès', H: decH, F: decF, nomH: 'Décédé', nomF: 'Décédée' }
+            ];
+
+            typesMouv.forEach(t => {
+                if (t.H > 0) {
+                    for (let i = 0; i < t.H; i++) {
+                        DB.mouvements.push({
+                            id: getNextId(DB.mouvements),
+                            date: dateStr,
+                            type: t.type,
+                            nom: t.nomH,
+                            prenom: '(Frère ' + (i + 1) + ')',
+                            genre: 'H',
+                            detail: t.type + ' - ' + moisNom + ' ' + y + ' (' + ville + ')',
+                            ville: ville
+                        });
+                    }
+                }
+                if (t.F > 0) {
+                    for (let i = 0; i < t.F; i++) {
+                        DB.mouvements.push({
+                            id: getNextId(DB.mouvements),
+                            date: dateStr,
+                            type: t.type,
+                            nom: t.nomF,
+                            prenom: '(Sœur ' + (i + 1) + ')',
+                            genre: 'F',
+                            detail: t.type + ' - ' + moisNom + ' ' + y + ' (' + ville + ')',
+                            ville: ville
+                        });
+                    }
+                }
+            });
+
+            saveData();
+            closeModal();
+            showNotification('✓ Stats enregistrées pour ' + ville + ' - Effectif fin: ' + finH + ' Frères, ' + finF +
+                ' Sœurs', 'success');
+            renderStatsTable();
+            updateBadges();
+            if (currentPage === 'mouvements') buildMouvements(document.getElementById('page-mouvements'));
+        }
+
+        // ============================================================
+        // PAGE EXPORT
+        // ============================================================
+        function buildExport(container) {
+            const stats = calcStats();
+            const minStats = {};
+            scopeMembres().filter(m => m.statut === 'Actif').forEach(m => { const k = (m.ministere || 'Autres').trim(); if (!
+                    minStats[k]) minStats[k] = { H: 0, F: 0 }; minStats[k][m.genre === 'H' ? 'H' : 'F']++; });
+            const minHtml = Object.keys(minStats).map(mn => { const data = minStats[mn]; return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:12px">' +
+                    mn + '</span><span class="badge b-blue">' + data.H + ' F</span><span class="badge b-purple">' + data
+                    .F + ' S</span><span class="badge b-gray">' + (data.H + data.F) + ' Total</span></div>'; }).join('');
+            const dbStats = {};
+            scopeMembres().filter(m => m.statut === 'Actif').forEach(m => { const k = m.egliseMaison || 'Non défini'; if (!
+                    dbStats[k]) dbStats[k] = { H: 0, F: 0 }; dbStats[k][m.genre === 'H' ? 'H' : 'F']++; });
+            const dbHtml = Object.keys(dbStats).map(db => { const data = dbStats[db]; return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="flex:1;font-size:11.5px">' +
+                    db + '</span><span class="badge b-blue">' + data.H + ' F</span><span class="badge b-purple">' + data
+                    .F + ' S</span><span class="badge b-gray">' + (data.H + data.F) + '</span></div>'; }).join('');
+            container.innerHTML =
+                `<div class="card"><div class="card-head"><span class="card-title">📥 Export & Rapports</span></div><div class="card-body"><div class="g3"><div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><i class="fas fa-table" style="font-size:28px;color:var(--green);display:block;margin-bottom:10px"></i><div style="font-weight:700;margin-bottom:6px">Registre des membres</div><div style="font-size:11.5px;color:var(--text2);margin-bottom:14px">Tous les membres en CSV</div><button class="btn btn-success btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i>Télécharger CSV</button></div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><i class="fas fa-arrows-alt-h" style="font-size:28px;color:var(--yellow);display:block;margin-bottom:10px"></i><div style="font-weight:700;margin-bottom:6px">Mouvements</div><div style="font-size:11.5px;color:var(--text2);margin-bottom:14px">Historique des mouvements</div><button class="btn btn-warn btn-sm" onclick="exportMouvements()"><i class="fas fa-download"></i>Télécharger CSV</button></div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><i class="fas fa-chart-bar" style="font-size:28px;color:var(--accent2);display:block;margin-bottom:10px"></i><div style="font-weight:700;margin-bottom:6px">Rapport HTML</div><div style="font-size:11.5px;color:var(--text2);margin-bottom:14px">Rapport imprimable</div><button class="btn btn-primary btn-sm" onclick="exportRapport()"><i class="fas fa-print"></i>Générer rapport</button></div></div><div class="divider"></div><div style="background:var(--bg3);border-radius:12px;padding:16px;margin-top:4px"><div style="font-size:13px;font-weight:700;margin-bottom:12px">📊 Résumé rapide</div><div class="g2"><div><div style="font-size:11.5px;color:var(--text2);margin-bottom:6px;font-weight:600">Effectif par ministère :</div>${minHtml}</div><div><div style="font-size:11.5px;color:var(--text2);margin-bottom:6px;font-weight:600">Effectif par DB :</div>${dbHtml}</div></div></div><div class="divider"></div><div style="text-align:center;font-size:11.5px;color:var(--text3)"><i class="fas fa-info-circle"></i> Toutes les données sont stockées localement. Sauvegardez via les exports CSV.</div></div></div>`;
+        }
+
+        // ============================================================
+        // PAGE CODES D'ACCÈS (administrateur uniquement)
+        // ============================================================
+        function accesVilles() { return Object.keys(DB.codes.villes).sort((a, b) => a.localeCompare(b, 'fr')); }
+
+        function codeTaken(code, exceptVille) {
+            if (exceptVille !== '__admin__' && code === normCode(DB.codes.admin)) return true;
+            return Object.keys(DB.codes.villes).some(v => v !== exceptVille && normCode(DB.codes.villes[v]) === code);
+        }
+
+        function buildAcces(container) {
+            if (!isAdmin()) { container.innerHTML = ''; return; }
+            const rows = accesVilles().map((v, i) => {
+                const nb = DB.membres.filter(m => normVille(m.ville) === normVille(v)).length;
+                return `<tr>
+                <td style="font-weight:700">${esc(v)}</td>
+                <td><input id="code-v-${i}" value="${esc(DB.codes.villes[v])}" style="max-width:190px;letter-spacing:1px"></td>
+                <td style="color:var(--text2)">${nb}</td>
+                <td><div class="btn-group">
+                  <button class="btn btn-success btn-sm" onclick="saveCodeVille(${i})"><i class="fas fa-save"></i>Enregistrer</button>
+                  <button class="btn btn-danger btn-sm" style="padding:5px 8px" onclick="removeVille(${i})" title="Retirer l'accès"><i class="fas fa-trash"></i></button>
+                </div></td></tr>`;
+            }).join('');
+            container.innerHTML = `
+            <div class="card">
+              <div class="card-head"><span class="card-title"><i class="fas fa-key" style="color:var(--accent2);margin-right:6px"></i>Codes d'accès des villes</span></div>
+              <div class="card-body" style="padding:0;overflow-x:auto">
+                <table class="dtable"><thead><tr><th style="text-align:left">Ville</th><th style="text-align:left">Code</th><th style="text-align:left">Membres</th><th style="text-align:left">Actions</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="4"><div class="empty"><i class="fas fa-key"></i>Aucune ville</div></td></tr>'}</tbody></table>
+              </div>
+            </div>
+            <div class="g2">
+              <div class="card"><div class="card-head"><span class="card-title">Ajouter une ville</span></div><div class="card-body">
+                <div class="fld"><label class="fld-lbl">Nom de la ville</label><input id="new-ville-nom" placeholder="Ex: Korhogo"></div>
+                <div class="fld"><label class="fld-lbl">Code d'accès</label><input id="new-ville-code" placeholder="Ex: KGO-1234"></div>
+                <div class="btn-group" style="justify-content:flex-end"><button class="btn btn-primary" onclick="addVille()"><i class="fas fa-plus"></i>Ajouter</button></div>
+              </div></div>
+              <div class="card"><div class="card-head"><span class="card-title">Code administrateur</span></div><div class="card-body">
+                <div class="fld"><label class="fld-lbl">Code (voit toutes les villes)</label><input id="admin-code" value="${esc(DB.codes.admin)}" style="letter-spacing:1px"></div>
+                <div class="btn-group" style="justify-content:flex-end"><button class="btn btn-primary" onclick="saveAdminCode()"><i class="fas fa-save"></i>Enregistrer</button></div>
+              </div></div>
+            </div>
+            <div style="text-align:center;font-size:11.5px;color:var(--text3);margin-top:14px"><i class="fas fa-info-circle"></i> Chaque ville ne voit que ses membres, ses mouvements et ses statistiques. Les codes sont enregistrés dans ce navigateur.</div>`;
+        }
+
+        function saveCodeVille(i) {
+            if (!isAdmin()) return;
+            const v = accesVilles()[i];
+            const code = normCode(document.getElementById('code-v-' + i).value);
+            if (!v) return;
+            if (code.length < 4) { showNotification('Le code doit avoir au moins 4 caractères', 'error'); return; }
+            if (codeTaken(code, v)) { showNotification('Ce code est déjà utilisé', 'error'); return; }
+            DB.codes.villes[v] = code;
+            saveData();
+            showNotification('Code de ' + v + ' mis à jour ✓');
+            buildAcces(document.getElementById('page-acces'));
+        }
+
+        function addVille() {
+            if (!isAdmin()) return;
+            const nom = document.getElementById('new-ville-nom').value.trim();
+            const code = normCode(document.getElementById('new-ville-code').value);
+            if (!nom) { showNotification('Le nom de la ville est obligatoire', 'error'); return; }
+            if (Object.keys(DB.codes.villes).some(v => normVille(v) === normVille(nom))) { showNotification(
+                    'Cette ville existe déjà', 'error'); return; }
+            if (code.length < 4) { showNotification('Le code doit avoir au moins 4 caractères', 'error'); return; }
+            if (codeTaken(code, null)) { showNotification('Ce code est déjà utilisé', 'error'); return; }
+            DB.codes.villes[nom] = code;
+            saveData();
+            showNotification('Ville ' + nom + ' ajoutée ✓');
+            buildAcces(document.getElementById('page-acces'));
+        }
+
+        function removeVille(i) {
+            if (!isAdmin()) return;
+            const v = accesVilles()[i];
+            if (!v || !confirm("Retirer l'accès de " + v + ' ? Ses données restent enregistrées.')) return;
+            delete DB.codes.villes[v];
+            saveData();
+            showNotification('Accès de ' + v + ' retiré', 'info');
+            buildAcces(document.getElementById('page-acces'));
+        }
+
+        function saveAdminCode() {
+            if (!isAdmin()) return;
+            const code = normCode(document.getElementById('admin-code').value);
+            if (code.length < 6) { showNotification('Le code administrateur doit avoir au moins 6 caractères', 'error'); return; }
+            if (codeTaken(code, '__admin__')) { showNotification('Ce code est déjà utilisé par une ville', 'error'); return; }
+            DB.codes.admin = code;
+            saveData();
+            showNotification('Code administrateur mis à jour ✓');
+            buildAcces(document.getElementById('page-acces'));
+        }
+
+        // ============================================================
+        // EXPORTS
+        // ============================================================
+        function exportCSV() {
+            const cfg = scopeConfig();
+            let csv = 'REGISTRE DES MEMBRES — ÉGLISE DE ' + cfg.ville + ' — RÉGION ' + cfg.region + '\n';
+            csv +=
+                'N°;NOM;PRÉNOMS;CONTACT;QUARTIER;PROFESSION;DATE BAPTÊME;GENRE;MINISTÈRE;ÉGLISE DE MAISON;VILLE;NOM DIRIGEANT;FORMATEUR;STATUT\n';
+            scopeMembres().forEach(m => { csv += m.id + ';' + m.nom + ';' + m.prenoms + ';' + m.contact + ';' + m.quartier +
+                    ';' + m.profession + ';' + m.dateBapteme + ';' + (m.genre === 'H' ? 'Homme' : 'Femme') + ';' + m
+                    .ministere + ';' + m.egliseMaison + ';' + (m.ville || '') + ';' + (m.nomDirigeant || '') + ';' + m
+                    .formateur + ';' + m.statut + '\n'; });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'Registre_Membres_' + cfg.ville + '_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            showNotification('Export CSV téléchargé ✓');
+        }
+
+        function exportMouvements() {
+            let csv = 'N°;DATE;TYPE;NOM;PRÉNOM;GENRE;DÉTAIL;VILLE\n';
+            scopeMouvements().forEach(m => { csv += m.id + ';' + m.date + ';' + m.type + ';' + m.nom + ';' + m.prenom + ';' + (
+                    m.genre === 'H' ? 'Frère' : 'Sœur') + ';' + m.detail + ';' + (m.ville || '') + '\n'; });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'Mouvements_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            showNotification('Export mouvements téléchargé ✓');
+        }
+
+        function exportRapport() {
+            const cfg = scopeConfig();
+            const stats = calcStats();
+            const minStats = {};
+            scopeMembres().filter(m => m.statut === 'Actif').forEach(m => { const k = (m.ministere || 'Autres').trim(); if (!
+                    minStats[k]) minStats[k] = { H: 0, F: 0 }; minStats[k][m.genre === 'H' ? 'H' : 'F']++; });
+            const win = window.open('', '_blank');
+            if (!win) { showNotification('Veuillez autoriser les pop-ups', 'error'); return; }
+            const minRows = Object.keys(minStats).map(min => { const d = minStats[min]; return '<tr><td>' + min +
+                    '</td><td>' + d.H + '</td><td>' + d.F + '</td><td><strong>' + (d.H + d.F) +
+                    '</strong></td></tr>'; }).join('');
+            const membresRows = scopeMembres().filter(m => m.statut === 'Actif').map(m => '<tr><td>' + m.id + '</td><td><strong>' +
+                    m.nom + '</strong></td><td>' + m.prenoms + '</td><td>' + (m.genre === 'H' ? 'Frère' : 'Sœur') +
+                    '</td><td>' + m.ministere + '</td><td>' + (m.egliseMaison || '—') + '</td><td>' + (m.ville || '—') +
+                    '</td><td>' + (m.nomDirigeant || '—') + '</td><td>' + (m.contact || '—') + '</td><td>' + (m
+                    .dateBapteme || '—') + '</td></tr>').join('');
+            win.document.write(
+                `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport Église de ${cfg.ville}</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#333}h1{color:#7C3AED;border-bottom:3px solid #7C3AED;padding-bottom:8px}h2{color:#555;margin-top:20px}table{width:100%;border-collapse:collapse;margin-top:10px}th{background:#7C3AED;color:#fff;padding:8px;text-align:left;font-size:12px}td{padding:7px 8px;border-bottom:1px solid #eee;font-size:12px}tr:nth-child(even){background:#f9f9f9}.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;background:#f0ebff;padding:14px;border-radius:8px}.info div{font-size:13px}</style></head><body><h1>✝ Rapport — Église de ${cfg.ville}</h1><div class="info"><div><strong>Ville :</strong> ${cfg.ville}</div><div><strong>Région :</strong> ${cfg.region}</div><div><strong>Dirigeant :</strong> ${cfg.dirigeant}</div><div><strong>Contact :</strong> ${cfg.contact}</div><div><strong>Date :</strong> ${new Date().toLocaleDateString('fr-FR')}</div></div><h2>📊 Statistiques générales</h2><table><thead><tr><th>Indicateur</th><th>Frères</th><th>Sœurs</th><th>Total</th></tr></thead><tbody><tr><td>Membres actifs</td><td>${stats.freres}</td><td>${stats.soeurs}</td><td>${stats.total}</td></tr></tbody></table><h2>⛪ Répartition par ministère</h2><table><thead><tr><th>Ministère</th><th>Frères</th><th>Sœurs</th><th>Total</th></tr></thead><tbody>${minRows}</tbody></table><h2>👥 Registre complet des membres</h2><table><thead><tr><th>N°</th><th>Nom</th><th>Prénoms</th><th>Genre</th><th>Ministère</th><th>DB</th><th>Ville</th><th>Dirigeant</th><th>Contact</th><th>Baptême</th></tr></thead><tbody>${membresRows}</tbody></table><p style="margin-top:20px;font-size:11px;color:#999;text-align:center">Rapport généré le ${new Date().toLocaleString('fr-FR')} · Application Gestion Église Man</p><script>window.print();<\/script></body></html>`
+                );
+            win.document.close();
+        }
+
+        // ============================================================
+        // THÈME & INIT
+        // ============================================================
+        document.getElementById('theme-sel').addEventListener('change', function() {
+            const val = this.value;
+            document.body.classList.toggle('light', val === 'light');
+            localStorage.setItem('eglise_theme', val);
+        });
+        const savedTheme = localStorage.getItem('eglise_theme');
+        if (savedTheme) { document.body.classList.toggle('light', savedTheme === 'light');
+            document.getElementById('theme-sel').value = savedTheme; }
+
+        document.querySelectorAll('.nav-btn[data-page]').forEach(btn => btn.addEventListener('click', function() {
+            navigateTo(this.dataset.page);
+        }));
+
+        document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this)
+            closeModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); toggleNav(false); } });
+
+        renderLogo();
+        applySession();
+        navigateTo('accueil');
+    </script>
+</body>
+
+</html>
